@@ -9,7 +9,7 @@ import os
 # --- CONFIGURATION & THEME ---
 st.set_page_config(page_title="Malaria AI Detector", layout="wide", page_icon="🔬")
 
-# ธีมแดง-ดำ (Red-Black Neon)
+# ตกแต่งธีม Red-Black ตามที่คุณต้องการ
 st.markdown("""
     <style>
     .stApp { background-color: #0b0c10; color: #eeeeee; }
@@ -17,7 +17,6 @@ st.markdown("""
         color: #ff0000 !important; 
         text-shadow: 0 0 10px #ff0000; 
         font-family: 'Segoe UI', sans-serif;
-        text-transform: uppercase;
     }
     .stFileUploader { border: 2px dashed #ff0000; background-color: #1f2833; border-radius: 15px; }
     .stButton>button { 
@@ -31,13 +30,12 @@ st.markdown("""
 # --- MODEL LOADING ---
 @st.cache_resource
 def load_malaria_model():
-    # ชื่อไฟล์ต้องตรงเป๊ะกับที่อยู่บน GitHub
+    # ไฟล์ต้องชื่อตรงเป๊ะกับที่อัปโหลดขึ้น GitHub
     model_path = 'malaria_mobilenetv2_model.keras'
     if os.path.exists(model_path):
         return tf.keras.models.load_model(model_path)
     return None
 
-# ประกาศตัวแปรป้องกัน NameError
 model = None
 class_names = ['Malaria Detected', 'Normal Cell']
 
@@ -64,7 +62,7 @@ with col2:
     st.subheader("🧪 Diagnostic Output")
     if uploaded_file:
         if model is not None:
-            # Preprocessing
+            # Preprocessing ให้เข้ากับ MobileNetV2[cite: 1]
             img_resized = img.resize((224, 224))
             img_array = image.img_to_array(img_resized)
             img_array = np.expand_dims(img_array, axis=0)
@@ -89,9 +87,6 @@ with col2:
             except Exception as ex:
                 st.error(f"วิเคราะห์ล้มเหลว: {ex}")
         else:
-            st.warning("⚠️ โมเดลไม่พร้อมใช้งาน (ตรวจสอบไฟล์โมเดลบน GitHub)")
+            st.warning("⚠️ โมเดลไม่พร้อมใช้งาน ตรวจสอบไฟล์โมเดลบน GitHub")
     else:
         st.info("Awaiting specimen upload...")
-
-st.markdown("---")
-st.caption("Project: Malaria Classification | Model: MobileNetV2")
