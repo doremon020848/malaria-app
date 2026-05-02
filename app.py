@@ -31,7 +31,7 @@ st.markdown("""
 @st.cache_resource
 def load_malaria_model():
     # ไฟล์ต้องชื่อตรงเป๊ะกับที่อัปโหลดขึ้น GitHub
-    model_path = 'origin_moblienet.py'
+    model_path = 'malaria_mobilenetv2_model.keras'
     if os.path.exists(model_path):
         return tf.keras.models.load_model(model_path)
     return None
