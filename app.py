@@ -55,19 +55,23 @@ with col1:
     st.subheader("📤 Image Submission")
     uploaded_file = st.file_uploader("Upload blood cell image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
-        img = Image.open(uploaded_file)
+        # แก้ไขบรรทัดนี้: เพิ่ม .convert('RGB') เพื่อเปลี่ยน RGBA เป็น RGB
+        img = Image.open(uploaded_file).convert('RGB') 
         st.image(img, caption='Submitted Specimen', use_container_width=True)
 
 with col2:
     st.subheader("🧪 Diagnostic Output")
     if uploaded_file:
         if model is not None:
-            # Preprocessing ให้เข้ากับ MobileNetV2[cite: 1]
+            # การทำ Preprocessing จะทำงานได้ถูกต้องเพราะเหลือ 3 Channel แล้ว
             img_resized = img.resize((224, 224))
-            img_array = image.img_to_array(img_resized)
-            img_array = np.expand_dims(img_array, axis=0)
+            img_array = image.img_to_array(img_resized) # จะได้ shape (224, 224, 3)
+            img_array = np.expand_dims(img_array, axis=0) # จะได้ shape (1, 224, 224, 3)
             img_array = preprocess_input(img_array)
 
+            # ตอนนี้ predict จะไม่เด้ง Error แล้วครับ
+            preds = model.predict(img_array)
+            # ... โค้ดส่วนที่เหลือ ...
             try:
                 with st.spinner('AI analyzing morphology...'):
                     preds = model.predict(img_array)
