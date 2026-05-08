@@ -24,7 +24,7 @@ st.markdown("""
 
 @st.cache_resource
 def load_malaria_model():
-    model_path = 'malaria_mobilenetv2_model.keras'
+    model_path = 'best_model.keras'
     if os.path.exists(model_path):
         return tf.keras.models.load_model(model_path)
     return None
