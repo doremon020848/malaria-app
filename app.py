@@ -51,7 +51,7 @@ html, body, [class*="css"] { font-family: 'Outfit', sans-serif !important; backg
 # ─── HERO ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-wrap">
-    <p class="hero-eyebrow">🧬 &nbsp; CMU DATA SCI</p>
+    <p class="hero-eyebrow">🧬 &nbsp; MobilenetV2</p>
     <h1 class="hero-title">Malaria<br>Scope</h1>
     <p class="hero-desc">วิเคราะห์เซลล์เม็ดเลือดแดงด้วย AI<br>เลือกภาพจากคลังตัวอย่างเพื่อเริ่มต้นการสแกน</p>
 </div>
@@ -160,4 +160,4 @@ else:
     st.error(f"❌ ไม่พบโฟลเดอร์ `{SAMPLE_DIR}` ในระบบ กรุณาตรวจสอบการอัปโหลดบน GitHub")
 
 # ─── FOOTER ────────────────────────────────────────────────────────────────────
-st.markdown("""<div class="footer">🧬 MALARIASCOPE · <span>CMU DATA SCIENCE</span> · 2026</div>""", unsafe_allow_html=True)
+
