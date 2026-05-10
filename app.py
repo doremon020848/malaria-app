@@ -444,8 +444,4 @@ input shape     = (1, 224, 224, 3)
 """, language="text")
 
 # ─── FOOTER ────────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="footer">
-    พัฒนาโดย&nbsp;<span>ไอ้ยี่สิบ</span>&nbsp;·&nbsp;Data Science&nbsp;·&nbsp;CMU&nbsp;·&nbsp;MobileNetV2
-</div>
-""", unsafe_allow_html=True)
+
