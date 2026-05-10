@@ -325,9 +325,8 @@ except Exception as e:
 # ─── DISCLAIMER ────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="disclaimer">
-    ⚠️&nbsp;
-    <span>ระบบนี้พัฒนาเพื่อการศึกษาเท่านั้น ไม่ใช่การวินิจฉัยทางการแพทย์
-    ผลที่ได้ควรตรวจสอบโดยแพทย์ผู้เชี่ยวชาญเสมอ</span>
+    &nbsp;
+    <span></span>
 </div>
 """, unsafe_allow_html=True)
 
