@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model.keras" # ชื่อไฟล์โมเดลที่มึงเทรนเสร็จ
+MODEL_PATH = "best_model (1).keras" # ชื่อไฟล์โมเดลที่มึงเทรนเสร็จ
 IMG_SIZE = (224, 224)
 
 # --- UI SETTINGS ---
