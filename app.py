@@ -11,296 +11,316 @@ IMG_SIZE = (224, 224)
 
 # --- PAGE CONFIG ---
 st.set_page_config(
-    page_title="Malaria Detection · CMU",
-    page_icon="🔬",
+    page_title="MalariaScope · CMU",
+    page_icon="🧬",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-# --- CUSTOM CSS ---
+# ─── MASTER CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500&display=swap');
 
-/* ─── RESET & ROOT ─────────────────────────────────────────────── */
 :root {
-    --bg:        #0b0f14;
-    --bg2:       #111720;
-    --bg3:       #182030;
-    --border:    #1e2d42;
-    --accent:    #00d4aa;
-    --accent2:   #0096ff;
-    --danger:    #ff4f6d;
-    --warn:      #ffb830;
-    --text:      #e2ecf7;
-    --muted:     #6b8aaa;
-    --card-r:    16px;
+    --ink:      #04080f;
+    --surface:  #080e1a;
+    --glass:    rgba(8,20,40,0.72);
+    --border:   rgba(0,210,180,0.13);
+    --border2:  rgba(0,210,180,0.28);
+    --cyan:     #00d2b4;
+    --cyan2:    #00ffe5;
+    --blue:     #0a84ff;
+    --red:      #ff3d6b;
+    --amber:    #ffc043;
+    --txt:      #d8eeff;
+    --muted:    #4d7a99;
+    --r:        18px;
 }
 
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-    background-color: var(--bg) !important;
-    color: var(--text) !important;
-}
-
-/* Hide default streamlit chrome */
+/* ── HIDE STREAMLIT CHROME ─────────────────────────────────────── */
 #MainMenu, footer, header { visibility: hidden; }
 .block-container {
-    padding: 2rem 2rem 4rem !important;
-    max-width: 780px !important;
+    padding: 0 1.8rem 5rem !important;
+    max-width: 800px !important;
 }
 
-/* ─── HERO HEADER ──────────────────────────────────────────────── */
-.hero {
-    text-align: center;
-    padding: 3rem 1rem 2rem;
+/* ── GLOBAL ────────────────────────────────────────────────────── */
+html, body, [class*="css"] {
+    font-family: 'Outfit', sans-serif !important;
+    background-color: var(--ink) !important;
+    color: var(--txt) !important;
+}
+
+/* ── ANIMATED GRID BACKGROUND ──────────────────────────────────── */
+.grid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(0,210,180,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,210,180,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+}
+.grid-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(0,210,180,.09) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(10,132,255,.07) 0%, transparent 60%);
+}
+
+/* ── HERO ──────────────────────────────────────────────────────── */
+.hero-wrap {
     position: relative;
+    padding: 3.5rem 1rem 2.5rem;
+    text-align: center;
 }
-.hero-icon {
-    font-size: 3.5rem;
-    display: block;
-    margin-bottom: .5rem;
-    filter: drop-shadow(0 0 24px #00d4aa88);
-    animation: pulse 3s ease-in-out infinite;
+.hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .22em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: .9rem;
+    opacity: .85;
 }
-@keyframes pulse {
-    0%, 100% { filter: drop-shadow(0 0 16px #00d4aa66); }
-    50%       { filter: drop-shadow(0 0 36px #00d4aacc); }
-}
-.hero h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.6rem;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    margin: 0 0 .4rem;
-    background: linear-gradient(135deg, #e2ecf7 30%, #00d4aa);
+.hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    margin: 0 0 .6rem;
+    background: linear-gradient(160deg, #ffffff 20%, var(--cyan) 60%, var(--blue) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
-.hero-sub {
+.hero-desc {
+    font-size: .9rem;
     color: var(--muted);
-    font-size: .95rem;
     font-weight: 300;
-    margin: 0;
     letter-spacing: .02em;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.7;
 }
-
-/* ─── STATUS BADGE ─────────────────────────────────────────────── */
-.status-badge {
+.pill {
     display: inline-flex;
     align-items: center;
-    gap: .45rem;
-    background: #00d4aa18;
-    border: 1px solid #00d4aa44;
+    gap: .5rem;
+    background: rgba(0,210,180,.08);
+    border: 1px solid var(--border2);
     border-radius: 999px;
-    padding: .3rem .9rem;
-    font-size: .78rem;
-    font-family: 'DM Mono', monospace;
-    color: var(--accent);
-    margin: 1rem auto .5rem;
-    letter-spacing: .04em;
+    padding: .32rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem;
+    color: var(--cyan);
+    letter-spacing: .1em;
+    margin: 1.2rem auto 0;
 }
-.status-dot {
-    width: 7px; height: 7px;
+.pill-dot {
+    width: 6px; height: 6px;
     border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: blink 1.6s ease infinite;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    animation: beat 1.8s ease-in-out infinite;
 }
-@keyframes blink {
-    0%,100% { opacity: 1; }
-    50%      { opacity: .3; }
+@keyframes beat {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.3; transform:scale(.6); }
 }
 
-/* ─── CARDS ────────────────────────────────────────────────────── */
-.card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--card-r);
-    padding: 1.6rem;
-    margin-bottom: 1.2rem;
-    transition: border-color .25s;
-}
-.card:hover { border-color: #2a4060; }
-
-.card-label {
-    font-size: .72rem;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: .12em;
+/* ── SECTION LABEL ─────────────────────────────────────────────── */
+.section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .18em;
     color: var(--muted);
     text-transform: uppercase;
-    margin-bottom: .8rem;
-}
-
-/* ─── RESULT PANEL ─────────────────────────────────────────────── */
-.result-safe {
-    background: linear-gradient(135deg, #00d4aa08, #0096ff08);
-    border: 1px solid #00d4aa33;
-    border-radius: var(--card-r);
-    padding: 1.8rem;
-    text-align: center;
-}
-.result-danger {
-    background: linear-gradient(135deg, #ff4f6d08, #ffb83008);
-    border: 1px solid #ff4f6d44;
-    border-radius: var(--card-r);
-    padding: 1.8rem;
-    text-align: center;
-}
-.result-label {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
-    margin: .4rem 0 .2rem;
-}
-.result-sub {
-    font-size: .85rem;
-    color: var(--muted);
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
 }
-.conf-bar-wrap {
-    background: var(--bg3);
-    border-radius: 999px;
-    height: 8px;
-    overflow: hidden;
-    margin: .6rem 0;
-}
-.conf-bar-fill-safe {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #00d4aa, #0096ff);
-    transition: width .8s cubic-bezier(.4,0,.2,1);
-}
-.conf-bar-fill-danger {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #ff4f6d, #ffb830);
-    transition: width .8s cubic-bezier(.4,0,.2,1);
-}
-.conf-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.1rem;
-    font-weight: 500;
+.section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border2), transparent);
 }
 
-/* ─── METRICS ROW ──────────────────────────────────────────────── */
-.metrics-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.2rem;
+/* ── FILE INFO GRID ────────────────────────────────────────────── */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .7rem;
+    margin-top: .5rem;
 }
-.metric-box {
-    flex: 1;
-    background: var(--bg2);
+.info-cell {
+    background: rgba(0,210,180,.05);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    padding: .75rem 1rem;
 }
-.metric-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--accent);
+.info-val {
+    font-family: 'Space Mono', monospace;
+    font-size: .95rem;
+    color: var(--txt);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.metric-lbl {
-    font-size: .72rem;
+.info-key {
+    font-size: .68rem;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: .08em;
-    margin-top: .1rem;
+    letter-spacing: .1em;
+    margin-top: .15rem;
 }
 
-/* ─── UPLOAD ZONE ──────────────────────────────────────────────── */
+/* ── UPLOAD ────────────────────────────────────────────────────── */
 [data-testid="stFileUploader"] {
-    background: var(--bg2) !important;
-    border: 2px dashed var(--border) !important;
-    border-radius: var(--card-r) !important;
-    padding: .5rem !important;
-    transition: border-color .25s !important;
+    background: rgba(0,210,180,.04) !important;
+    border: 1.5px dashed rgba(0,210,180,.22) !important;
+    border-radius: var(--r) !important;
+    transition: border-color .3s !important;
 }
 [data-testid="stFileUploader"]:hover {
-    border-color: var(--accent) !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] {
-    color: var(--muted) !important;
+    border-color: rgba(0,210,180,.55) !important;
 }
 
-/* ─── BUTTON ───────────────────────────────────────────────────── */
+/* ── ANALYSE BUTTON ────────────────────────────────────────────── */
 [data-testid="stButton"] > button {
-    background: linear-gradient(135deg, #00d4aa, #0096ff) !important;
-    color: #050a0f !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-weight: 600 !important;
-    font-size: .95rem !important;
+    width: 100% !important;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 100%) !important;
+    color: #040c18 !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    letter-spacing: .06em !important;
     border: none !important;
     border-radius: 12px !important;
-    padding: .75rem 2rem !important;
-    width: 100% !important;
-    letter-spacing: .02em !important;
-    transition: opacity .2s, transform .15s !important;
-    box-shadow: 0 4px 20px #00d4aa33 !important;
+    padding: .9rem 2rem !important;
+    box-shadow: 0 0 32px rgba(0,210,180,.25), 0 4px 20px rgba(0,0,0,.5) !important;
+    transition: transform .15s, box-shadow .2s, opacity .2s !important;
+    text-transform: uppercase !important;
 }
 [data-testid="stButton"] > button:hover {
-    opacity: .88 !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 8px 28px #00d4aa44 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 0 52px rgba(0,210,180,.42), 0 8px 30px rgba(0,0,0,.6) !important;
+    opacity: .92 !important;
 }
-[data-testid="stButton"] > button:active {
-    transform: translateY(0) !important;
-}
+[data-testid="stButton"] > button:active { transform: translateY(0) !important; }
 
-/* ─── SPINNER ──────────────────────────────────────────────────── */
-[data-testid="stSpinner"] > div { color: var(--accent) !important; }
-
-/* ─── DIVIDER ──────────────────────────────────────────────────── */
-hr { border-color: var(--border) !important; margin: 1.5rem 0 !important; }
-
-/* ─── IMAGE ────────────────────────────────────────────────────── */
-[data-testid="stImage"] img {
-    border-radius: 12px !important;
-    border: 1px solid var(--border) !important;
-}
-
-/* ─── ALERTS ───────────────────────────────────────────────────── */
-[data-testid="stAlert"] {
-    border-radius: 12px !important;
-    font-size: .88rem !important;
-}
-
-/* ─── FOOTER ───────────────────────────────────────────────────── */
-.app-footer {
+/* ── RESULT PANELS ─────────────────────────────────────────────── */
+.result-box {
+    border-radius: var(--r);
+    padding: 2.4rem 2rem;
     text-align: center;
-    padding: 2rem 0 0;
+    position: relative;
+    overflow: hidden;
+}
+.result-box::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+    opacity: .3;
+}
+.result-safe {
+    background: linear-gradient(160deg, rgba(0,210,180,.08), rgba(10,132,255,.05));
+    border: 1px solid rgba(0,210,180,.32);
+}
+.result-safe::before   { background: var(--cyan); }
+.result-danger {
+    background: linear-gradient(160deg, rgba(255,61,107,.08), rgba(255,192,67,.04));
+    border: 1px solid rgba(255,61,107,.34);
+}
+.result-danger::before { background: var(--red); }
+
+.result-icon  { font-size: 3.4rem; margin-bottom: .5rem; }
+.result-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    margin: 0 0 .2rem;
+}
+.result-eng {
+    font-size: .72rem;
     color: var(--muted);
-    font-size: .75rem;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: .06em;
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
+    letter-spacing: .14em;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 1.4rem;
+    text-transform: uppercase;
+}
+.conf-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1;
+}
+.bar-track {
+    height: 6px;
+    background: rgba(255,255,255,.07);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: .7rem auto;
+    max-width: 340px;
+}
+.bar-fill-safe   { height:100%; border-radius:999px; background: linear-gradient(90deg,var(--cyan),var(--blue)); }
+.bar-fill-danger { height:100%; border-radius:999px; background: linear-gradient(90deg,var(--red),var(--amber)); }
+
+/* image */
+[data-testid="stImage"] img {
+    border-radius: 14px !important;
+    border: 1px solid var(--border2) !important;
 }
 
-/* ─── DISCLAIMER CARD ──────────────────────────────────────────── */
-.disclaimer {
-    background: #ffb83010;
-    border: 1px solid #ffb83033;
-    border-radius: 10px;
-    padding: .9rem 1.1rem;
-    font-size: .8rem;
-    color: #ffb830cc;
-    margin-bottom: 1.2rem;
-    display: flex;
-    align-items: flex-start;
-    gap: .6rem;
+/* spinner */
+[data-testid="stSpinner"] > div { color: var(--cyan) !important; }
+
+/* expander */
+details { border: 1px solid var(--border) !important; border-radius: 12px !important; }
+
+/* ── FOOTER ────────────────────────────────────────────────────── */
+.footer {
+    text-align: center;
+    padding: 2.5rem 0 0;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    margin-top: 2.5rem;
 }
+.footer span { color: var(--cyan); }
 </style>
+
+<div class="grid-bg"></div>
 """, unsafe_allow_html=True)
 
 # ─── HERO ──────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="hero">
-    <span class="hero-icon">🔬</span>
-    <h1>Malaria Cell Detection</h1>
-    <p class="hero-sub">MobileNetV2 · Transfer Learning · Binary Classification</p>
+<div class="hero-wrap">
+    <p class="hero-eyebrow">🧬 &nbsp; Plasmodium Detection System</p>
+    <h1 class="hero-title">Malaria<br>Scope</h1>
+    <p class="hero-desc">วิเคราะห์เซลล์เม็ดเลือดแดงด้วย MobileNetV2<br>ความแม่นยำสูง · ประมวลผลเร็ว</p>
+    <div style="text-align:center">
+        <span class="pill">
+            <span class="pill-dot"></span> MODEL LOADED · CMU DATA SCI
+        </span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -311,123 +331,121 @@ def load_my_model():
 
 try:
     model = load_my_model()
-    st.markdown("""
-    <div style="text-align:center; margin-bottom:1.5rem;">
-        <span class="status-badge">
-            <span class="status-dot"></span>MODEL READY
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
-except Exception as e:
-    st.error(f"⚠️  โหลดโมเดลไม่สำเร็จ — วางไฟล์ `{MODEL_PATH}` ไว้ในโฟลเดอร์เดียวกันด้วยนะ")
+except Exception:
+    st.error(f"⚠️  ไม่พบไฟล์ `{MODEL_PATH}` — วางไว้ในโฟลเดอร์เดียวกันด้วยนะ")
     st.stop()
 
-# ─── DISCLAIMER ────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="disclaimer">
-    &nbsp;
-    <span></span>
-</div>
-""", unsafe_allow_html=True)
-
 # ─── UPLOAD ────────────────────────────────────────────────────────────────────
-st.markdown('<div class="card-label">📁 &nbsp;อัปโหลดภาพเซลล์เม็ดเลือดแดง</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">📁 &nbsp;อัปโหลดภาพเซลล์</div>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader(
-    label="วางหรือเลือกไฟล์ JPG / PNG",
+    label="drag & drop หรือเลือกไฟล์ JPG / PNG",
     type=["jpg", "jpeg", "png"],
-    label_visibility="collapsed",
+    label_visibility="visible",
 )
 
 if uploaded_file is not None:
-    img = Image.open(uploaded_file).convert("RGB")
+    img  = Image.open(uploaded_file).convert("RGB")
     w, h = img.size
 
-    # ─── PREVIEW + META ────────────────────────────────────────────────────────
-    col_img, col_meta = st.columns([3, 2], gap="medium")
-    with col_img:
-        st.image(img, caption="", use_column_width=True)
+    # ── IMAGE + META ──────────────────────────────────────────────────────────
+    col_img, col_info = st.columns([5, 4], gap="medium")
 
-    with col_meta:
+    with col_img:
+        st.image(img, use_column_width=True)
+
+    with col_info:
         st.markdown(f"""
-        <div style="margin-top:.5rem;">
-            <div class="card-label">ℹ️ &nbsp;รายละเอียดไฟล์</div>
-        </div>
-        <div class="metrics-row" style="flex-direction:column; gap:.7rem;">
-            <div class="metric-box">
-                <div class="metric-val">{uploaded_file.name[:20]}</div>
-                <div class="metric-lbl">ชื่อไฟล์</div>
+        <div style="height:.4rem"></div>
+        <div class="section-label">ℹ️ &nbsp;ข้อมูลไฟล์</div>
+        <div class="info-grid">
+            <div class="info-cell" style="grid-column:1/-1">
+                <div class="info-val">{uploaded_file.name}</div>
+                <div class="info-key">Filename</div>
             </div>
-            <div class="metric-box">
-                <div class="metric-val">{w} × {h}</div>
-                <div class="metric-lbl">ความละเอียด (px)</div>
+            <div class="info-cell">
+                <div class="info-val">{w}×{h}</div>
+                <div class="info-key">Resolution</div>
             </div>
-            <div class="metric-box">
-                <div class="metric-val">{uploaded_file.size / 1024:.1f} KB</div>
-                <div class="metric-lbl">ขนาดไฟล์</div>
+            <div class="info-cell">
+                <div class="info-val">{uploaded_file.size/1024:.1f} KB</div>
+                <div class="info-key">File size</div>
+            </div>
+            <div class="info-cell" style="grid-column:1/-1">
+                <div class="info-val">224 × 224 × 3</div>
+                <div class="info-key">Model input shape</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("<div style='height:.4rem'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
 
-    # ─── PREPROCESS ────────────────────────────────────────────────────────────
+    # ── PREPROCESS ───────────────────────────────────────────────────────────
     img_resized = img.resize(IMG_SIZE)
-    img_array  = image.img_to_array(img_resized)
-    img_array  = np.expand_dims(img_array, axis=0)
-    img_array  = preprocess_input(img_array)
+    img_array   = image.img_to_array(img_resized)
+    img_array   = np.expand_dims(img_array, axis=0)
+    img_array   = preprocess_input(img_array)
 
-    # ─── ANALYSE BUTTON ────────────────────────────────────────────────────────
-    if st.button("🧬  เริ่มวิเคราะห์เซลล์"):
-        with st.spinner("กำลังประมวลผลด้วย Neural Network…"):
-            prediction = model.predict(img_array)[0][0]
+    # ── BUTTON ───────────────────────────────────────────────────────────────
+    run = st.button("🔬  ANALYSE CELL")
 
-        confidence = float(prediction if prediction > 0.5 else 1 - prediction)
+    if run:
+        with st.spinner("Neural Network กำลังสแกน…"):
+            prediction = float(model.predict(img_array)[0][0])
+
+        confidence = prediction if prediction > 0.5 else 1 - prediction
         conf_pct   = confidence * 100
         is_safe    = prediction > 0.5
 
-        st.markdown("<div style='height:.6rem'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:.8rem'></div>", unsafe_allow_html=True)
 
         if is_safe:
             st.balloons()
-            st.markdown(f"""
-            <div class="result-safe">
-                <div style="font-size:2.8rem; margin-bottom:.3rem;">✅</div>
-                <div class="result-label" style="color:#00d4aa;">Uninfected</div>
-                <div class="result-sub">ไม่พบการติดเชื้อมาลาเรีย</div>
-                <div class="conf-bar-wrap">
-                    <div class="conf-bar-fill-safe" style="width:{conf_pct:.1f}%"></div>
-                </div>
-                <div class="conf-num" style="color:#00d4aa;">{conf_pct:.2f}% Confidence</div>
-            </div>
-            """, unsafe_allow_html=True)
+            bar_html  = f'<div class="bar-fill-safe" style="width:{conf_pct:.1f}%"></div>'
+            box_cls   = "result-safe"
+            icon      = "✅"
+            title_th  = "ไม่ติดเชื้อ"
+            title_en  = "UNINFECTED · NORMAL CELL"
+            pct_color = "#00d2b4"
         else:
-            st.markdown(f"""
-            <div class="result-danger">
-                <div style="font-size:2.8rem; margin-bottom:.3rem;">⚠️</div>
-                <div class="result-label" style="color:#ff4f6d;">Infected</div>
-                <div class="result-sub">ตรวจพบเชื้อมาลาเรีย — กรุณาพบแพทย์</div>
-                <div class="conf-bar-wrap">
-                    <div class="conf-bar-fill-danger" style="width:{conf_pct:.1f}%"></div>
-                </div>
-                <div class="conf-num" style="color:#ff4f6d;">{conf_pct:.2f}% Confidence</div>
-            </div>
-            """, unsafe_allow_html=True)
+            bar_html  = f'<div class="bar-fill-danger" style="width:{conf_pct:.1f}%"></div>'
+            box_cls   = "result-danger"
+            icon      = "⚠️"
+            title_th  = "ตรวจพบเชื้อ"
+            title_en  = "INFECTED · PLASMODIUM DETECTED"
+            pct_color = "#ff3d6b"
 
-        # ─── RAW SCORE ─────────────────────────────────────────────────────────
-        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-        with st.expander("🔢  Raw model output"):
-            st.markdown(f"""
-            <div style="font-family:'DM Mono',monospace; font-size:.82rem; color:var(--muted,#6b8aaa); line-height:1.9;">
-                sigmoid output &nbsp;=&nbsp; <span style="color:#e2ecf7">{prediction:.6f}</span><br>
-                threshold &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp; <span style="color:#e2ecf7">0.5</span><br>
-                class &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp; <span style="color:#00d4aa">{'Uninfected (1)' if is_safe else 'Infected (0)'}</span><br>
-                input size &nbsp;&nbsp;&nbsp;=&nbsp; <span style="color:#e2ecf7">224 × 224 × 3</span>
+        st.markdown(f"""
+        <div class="result-box {box_cls}">
+            <div class="result-icon">{icon}</div>
+            <div class="result-title" style="color:{pct_color}">{title_th}</div>
+            <div class="result-eng">{title_en}</div>
+            <div class="conf-pct" style="color:{pct_color}">
+                {conf_pct:.1f}<span style="font-size:1.1rem;opacity:.55">%</span>
             </div>
-            """, unsafe_allow_html=True)
+            <div style="font-size:.7rem;color:var(--muted);font-family:'Space Mono',monospace;
+                        margin:.25rem 0 .8rem;letter-spacing:.1em">CONFIDENCE</div>
+            <div class="bar-track">{bar_html}</div>
+            <div style="font-size:.68rem;color:var(--muted);font-family:'Space Mono',monospace;
+                        letter-spacing:.08em;margin-top:.6rem">
+                sigmoid&nbsp;=&nbsp;{prediction:.5f}&emsp;·&emsp;threshold&nbsp;=&nbsp;0.50000
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:.5rem'></div>", unsafe_allow_html=True)
+
+        with st.expander("🔢  Raw model output"):
+            st.code(f"""sigmoid output  = {prediction:.8f}
+threshold       = 0.50000000
+predicted class = {"Uninfected (1)" if is_safe else "Infected (0)"}
+confidence      = {conf_pct:.4f} %
+backbone        = MobileNetV2  (ImageNet pretrained)
+input shape     = (1, 224, 224, 3)
+""", language="text")
 
 # ─── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="app-footer">
-    พัฒนาโดย <strong>ไอ้ยี่สิบ</strong> &nbsp;·&nbsp; Data Science · CMU &nbsp;·&nbsp; MobileNetV2 backbone
+<div class="footer">
+    พัฒนาโดย&nbsp;<span>ไอ้ยี่สิบ</span>&nbsp;·&nbsp;Data Science&nbsp;·&nbsp;CMU&nbsp;·&nbsp;MobileNetV2
 </div>
 """, unsafe_allow_html=True)
