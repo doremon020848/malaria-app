@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model (2).keras"
+MODEL_PATH = "malaria_mobilenetv2_model.keras"
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"  # ชื่อโฟลเดอร์ที่เก็บรูป
 
