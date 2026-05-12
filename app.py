@@ -104,13 +104,13 @@ st.markdown('<div class="info-card-vertical"><span class="info-label">Orbit Prec
 # ─── MODEL LOADING ─────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_my_model():
-    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+  return tf.keras.models.load_model(MODEL_PATH, compile=False)
 
 try:
-    model = load_my_model()
+  model = load_my_model()
 except:
-    st.error("🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
-    st.stop()
+  st.error("🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
+  st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
 st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px;">[ SELECTION_MODE ]</p>', unsafe_allow_html=True)
