@@ -41,7 +41,7 @@ st.markdown("""
 }
 .hero-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 28px !important;
+    font-size: 32px !important;
     font-weight: 700;
     letter-spacing: 1px;
     background: linear-gradient(180deg, #ffffff, #4da3ff);
@@ -58,7 +58,7 @@ st.markdown("""
     background: rgba(10, 25, 47, 0.6);
     border: 1px solid rgba(77, 163, 255, 0.15);
     border-left: 4px solid #4da3ff;
-    padding: 15px; #
+    padding: 15px; 
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
@@ -125,7 +125,7 @@ div.stButton > button:hover {
         letter-spacing: 0px !important;
     }
     .hero-header {
-        padding: 1rem 0; /* ลดช่องว่างด้านบนลง */
+        padding: 1px 0; /* ลดช่องว่างด้านบนลง */
     }
     .result-display {
         padding: 15px; /* ลดกรอบผลลัพธ์ให้ดูพอดีมือถือ */
