@@ -109,8 +109,8 @@ def load_my_model():
 try:
   model = load_my_model()
 except:
-  st.error("🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
-  st.stop()
+  st.error("🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
+  st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
 st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px;">[ SELECTION_MODE ]</p>', unsafe_allow_html=True)
