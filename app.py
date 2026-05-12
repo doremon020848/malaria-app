@@ -135,14 +135,14 @@ if img:
     st.image(img, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    if st.button("INITIATE SCAN"):
+    if st.button("ANALYZE"):
         # Preprocess
         img_p = img.resize(IMG_SIZE)
         img_arr = image.img_to_array(img_p)
         img_arr = np.expand_dims(img_arr, axis=0)
         img_arr = preprocess_input(img_arr)
         
-        with st.spinner("PROCESSING NEURAL DATA..."):
+        with st.spinner("PROCESSING..."):
             pred = float(model.predict(img_arr)[0][0])
         
         is_safe = pred > 0.5
