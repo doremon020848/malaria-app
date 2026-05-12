@@ -24,7 +24,7 @@ st.markdown("""
     display: flex !important;
     flex-direction: column !important; 
     align-items: center !important;  
-    justify-content: flex-start !important; /* เปลี่ยนเป็น flex-start ให้เลื่อนดูบนมือถือได้ไม่บั๊ก */
+    justify-content: flex-start !important; 
     background: linear-gradient(180deg, #050a15 0%, #000000 100%);
     color: #e6f1ff;
 }
@@ -34,7 +34,7 @@ st.markdown("""
 /* หัวข้อใหญ่แนวตั้ง */
 .hero-header {
     text-align: center;
-    padding: 2rem 5%; /* ใช้ % เพื่อให้ยืดหยุ่นบนมือถือ */
+    padding: 2rem 5%; 
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 1.5rem;
     width: 100%;
@@ -83,7 +83,7 @@ div.stButton > button {
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.8rem !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
     border: none !important;
     font-size: 1.1rem !important;
     font-weight: 700 !important;
