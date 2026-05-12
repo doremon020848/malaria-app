@@ -196,7 +196,7 @@ if img:
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase;">SCAN RESULT</p>
             <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem;">{status}</h2>
-            <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 60%;"></div>
+            <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase;">CONFIDENCE LEVEL</p>
             <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff;">{conf*100:.2f}%</h1>
         </div>
