@@ -76,7 +76,7 @@ div.stButton > button {
 
 /* ช่อง Preview รูป */
 .img-container {
-    border: 1px solid rgba(77, 163, 255, 0.2);
+    border: 0px solid rgba(77, 163, 255, 0.2);
     padding: 0px;
     background: rgba(0,0,0,0.5);
 }
