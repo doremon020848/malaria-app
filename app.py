@@ -34,7 +34,7 @@ st.markdown("""
 /* หัวข้อใหญ่แนวตั้ง */
 .hero-header {
     text-align: center;
-    padding: 1px 5%; 
+    padding: 1rem 5%; 
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 1.5rem;
     width: 100%;
@@ -58,7 +58,7 @@ st.markdown("""
     background: rgba(10, 25, 47, 0.6);
     border: 1px solid rgba(77, 163, 255, 0.15);
     border-left: 4px solid #4da3ff;
-    padding: 1px; #15
+    padding: 15px; #
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
