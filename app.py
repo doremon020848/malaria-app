@@ -135,7 +135,7 @@ if img:
     st.image(img, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    if st.button("ANALYZE"):
+    if st.button("START ANALYTICS"):
         # Preprocess
         img_p = img.resize(IMG_SIZE)
         img_arr = image.img_to_array(img_p)
