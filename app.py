@@ -63,15 +63,13 @@ st.markdown("""
 
 /* ปุ่ม Action */
 div.stButton > button {
-    display: flex;
-    justify-content: center;
     
     width: 100% !important;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 5 !important;
+    border-radius: 5px !important;
     border: none !important;
     font-size: 1.1rem !important;
     margin-top: 1rem;
