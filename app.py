@@ -74,24 +74,34 @@ st.markdown("""
 #     margin-top: 1rem;
 # }
 
+/* 1. สั่งให้กล่องข้างนอกสุด จัดการเนื้อหาภายในให้ดึงมาไว้ตรงกลาง */
 div.stButton {
-    text-align: center; /* สั่งให้สิ่งที่อยู่ในกล่องนี้อยู่ตรงกลาง */
+    display: flex !important;
+    justify-content: center !important; /* จัดกลางแนวนอน */
+    align-items: center !important;     /* จัดกลางแนวตั้ง (ถ้ามีพื้นที่) */
+    width: 100% !important;
+    margin: 1rem 0 !important;
 }
 
+/* 2. ตั้งค่าตัวปุ่มให้มีขนาดตามที่ต้องการ (ไม่ให้มันยืดเต็มจอ) */
 div.stButton > button {
-    width: 100% !important; 
+    width: 250px !important; /* กำหนดความกว้างคงที่ จะดูเป็นปุ่มมากขึ้น */
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 12px !important; /* ใส่หน่วย px ด้วยนะไอ้ยี่สิบ */
+    border-radius: 12px !important; /* มนๆ ตามที่อยากได้ */
     border: none !important;
     font-size: 1.1rem !important;
-    margin-top: 1rem;
-
-    display: inline-block !important; 
+    transition: 0.3s !important;
 }
 
+/* 3. แถม: Effect เวลาเอาเมาส์ไปวาง ให้มันดูมีมิติ */
+div.stButton > button:hover {
+    background: #ffffff !important;
+    box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
+    transform: scale(1.05); /* ขยายใหญ่ขึ้นนิดนึงเวลาจ่อเมาส์ */
+}
 
 /* ช่อง Preview รูป */
 .img-container {
