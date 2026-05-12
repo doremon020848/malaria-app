@@ -92,8 +92,8 @@ div.stButton > button {
 # ─── HEADER ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-header">
-    <h1 class="hero-title">A-SPACE</h1>
-    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px;">NEURAL SCANNER V2</p>
+    <h1 class="hero-title">Lightweight Image classification for malaria detection using mobilenetv2</h1>
+    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px; margin-top:10px;">NEURAL SCANNER V2</p>
 </div>
 """, unsafe_allow_html=True)
 
