@@ -74,12 +74,10 @@ st.markdown("""
 #     margin-top: 1rem;
 # }
 
-/* เล็งไปที่กล่องครอบปุ่ม (Container) */
 div.stButton {
     text-align: center; /* สั่งให้สิ่งที่อยู่ในกล่องนี้อยู่ตรงกลาง */
 }
 
-/* ปรับแต่งตัวปุ่ม */
 div.stButton > button {
     width: 100% !important; 
     background: #4da3ff !important;
@@ -90,8 +88,7 @@ div.stButton > button {
     border: none !important;
     font-size: 1.1rem !important;
     margin-top: 1rem;
-    
-    /* กรณีอยากให้ชัวร์ว่ามันยอมมาแน่ๆ */
+
     display: inline-block !important; 
 }
 
