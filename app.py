@@ -61,41 +61,17 @@ st.markdown("""
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
 .info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 1rem; }
 
-# /* ปุ่ม Action */
-# div.stButton > button {
-#     width: 100% !important;
-#     background: #4da3ff !important;
-#     color: #02060c !important;
-#     font-family: 'Orbitron', sans-serif !important;
-#     height: 3.5rem !important;
-#     border-radius: 5 !important;
-#     border: none !important;
-#     font-size: 1.1rem !important;
-#     margin-top: 1rem;
-# }
-/* คุมกล่องครอบปุ่มให้แผ่เต็มพื้นที่ */
-div.stButton {
-    width: 100% !important;
-    display: block !important;
-}
-
-/* ตั้งค่าตัวปุ่มให้ยาวเต็มจอ */
+/* ปุ่ม Action */
 div.stButton > button {
-    width: 100% !important; /* บังคับยาวเต็มจอ */
+    width: 1000% !important;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    
-    /* ถ้าอยากได้เหลี่ยมเป๊ะให้ใส่ 0 ถ้าอยากได้โค้งนิดๆ ให้ใส่ 5px-10px */
-    border-radius: 0px !important; 
-    
+    border-radius: 5 !important;
     border: none !important;
     font-size: 1.1rem !important;
-    font-weight: 700 !important;
     margin-top: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
 }
 
 div.stButton > button:hover {
