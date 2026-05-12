@@ -34,14 +34,14 @@ st.markdown("""
 /* หัวข้อใหญ่แนวตั้ง */
 .hero-header {
     text-align: center;
-    padding: 2rem 5%; 
+    padding: 16px 5%; 
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 1.5rem;
     width: 100%;
 }
 .hero-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 32px !important;
+    font-size: 28px !important;
     font-weight: 700;
     letter-spacing: 1px;
     background: linear-gradient(180deg, #ffffff, #4da3ff);
