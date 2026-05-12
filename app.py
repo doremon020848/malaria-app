@@ -14,21 +14,17 @@ SAMPLE_DIR = "samples"
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
 
-# ─── THE SPACESHIP UI (CSS - Vertical Optimized) ──────────────────────────────
+# ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
 
-/* พื้นหลังอวกาศมืดสนิท */
-# .stApp {
-#     background: linear-gradient(180deg, #050a15 0%, #000000 100%);
-#     color: #e6f1ff;
-# }
+/* พื้นหลังอวกาศมืดสนิทและจับให้อยู่ตรงกลาง */
 .stApp { 
     display: flex !important;
     flex-direction: column !important; 
     align-items: center !important;  
-    justify-content: center !important; 
+    justify-content: flex-start !important; /* เปลี่ยนเป็น flex-start ให้เลื่อนดูบนมือถือได้ไม่บั๊ก */
     background: linear-gradient(180deg, #050a15 0%, #000000 100%);
     color: #e6f1ff;
 }
@@ -38,15 +34,16 @@ st.markdown("""
 /* หัวข้อใหญ่แนวตั้ง */
 .hero-header {
     text-align: center;
-    padding: 2rem 0;
+    padding: 2rem 5%; /* ใช้ % เพื่อให้ยืดหยุ่นบนมือถือ */
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
 }
 .hero-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 32px !important; /* ลองปรับเลขนี้ดูครับ 32px, 40px, 48px */
+    font-size: 32px !important;
     font-weight: 700;
-    letter-spacing: 1px; /* ลดระยะห่างตัวอักษรลงหน่อยเพราะชื่อยาว เดี๋ยวล้นจอ */
+    letter-spacing: 1px;
     background: linear-gradient(180deg, #ffffff, #4da3ff);
     text-transform: uppercase;
     -webkit-background-clip: text;
@@ -55,7 +52,8 @@ st.markdown("""
     line-height: 1.3 !important;
     margin: 0 auto;
 }
-/* กล่อง Info Card แบบเรียงแถวเดียว (แนวตั้ง) */
+
+/* กล่อง Info Card แบบเรียงแถวเดียว */
 .info-card-vertical {
     background: rgba(10, 25, 47, 0.6);
     border: 1px solid rgba(77, 163, 255, 0.15);
@@ -65,25 +63,27 @@ st.markdown("""
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
 .info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.9rem; }
 
-/* --- แก้ไขส่วนปุ่ม Action ให้มาอยู่ตรงกลางจอ --- */
+/* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
 div.stButton {
     display: flex !important;
-    justify-content: center !important; /* ดีดปุ่มเข้ากลางแนวนอน */
+    justify-content: center !important;
     width: 100% !important;
     margin-top: 1rem !important;
 }
 
 div.stButton > button {
-    width: 280px !important; /* กำหนดความกว้างปุ่มให้พอดี ไม่ให้ยาวเต็มจอ */
+    width: 100% !important;       /* ให้มันยืดเต็มที่บนจอมือถือเล็กๆ */
+    max-width: 280px !important;  /* แต่ห้ามกว้างเกิน 280px บนจอใหญ่ */
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.8rem !important;
-    border-radius: 12px !important; /* แก้จาก 10ppx เป็น 12px (พิมพ์หน่วยผิดนะอันเดิม) */
+    border-radius: 12px !important;
     border: none !important;
     font-size: 1.1rem !important;
     font-weight: 700 !important;
@@ -95,7 +95,7 @@ div.stButton > button {
 div.stButton > button:hover {
     background: #ffffff !important;
     box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
-    transform: scale(1.01); /* ขยายใหญ่ขึ้นนิดนึงเวลาจ่อเมาส์ */
+    transform: scale(1.02); /* ขยายขึ้นนิดนึงพอดีๆ */
 }
 
 /* ช่อง Preview รูป */
@@ -103,17 +103,33 @@ div.stButton > button:hover {
     border: 0px solid rgba(77, 163, 255, 0.2);
     padding: 0px;
     background: rgba(0,0,0,0.5);
+    width: 100%;
 }
 
 /* ผลลัพธ์ (Result) */
 .result-display {
     background: rgba(255, 255, 255, 0.03);
-    padding: 25px;
+    padding: 20px;
     text-align: center;
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
-    text-align: center;
-    
+    width: 100%;
+}
+
+/* =======================================================
+   MOBILE RESPONSIVE (ถ้าหน้าจอเล็กกว่า 768px ให้ทำตามนี้)
+   ======================================================= */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 24px !important; /* ย่อหัวข้อลงนิดนึงกันล้นจอ */
+        letter-spacing: 0px !important;
+    }
+    .hero-header {
+        padding: 1rem 0; /* ลดช่องว่างด้านบนลง */
+    }
+    .result-display {
+        padding: 15px; /* ลดกรอบผลลัพธ์ให้ดูพอดีมือถือ */
+    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -122,9 +138,9 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px;">with 98.5% Precision</p>
+    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px; margin-top:10px;">with 98.5% Precision</p>
 </div>
-""",unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # ─── MODEL LOADING ─────────────────────────────────────────────────────────────
 @st.cache_resource
@@ -177,11 +193,11 @@ if img:
         status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
         
         st.markdown(f"""
-        <div class="result-display">
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0;">SCAN RESULT</p>
-            <h2 style="font-family:Orbitron; color:{color}; margin:0; letter-spacing:2px; font-size: 1.8rem;">{status}</h2>
-            <div style="margin: 15px 0; height: 1px; background: rgba(77,163,255,0.2);"></div>
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0;">CONFIDENCE LEVEL</p>
-            <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0;">{conf*100:.2f}%</h1>
+        <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase;">SCAN RESULT</p>
+            <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem;">{status}</h2>
+            <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 60%;"></div>
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase;">CONFIDENCE LEVEL</p>
+            <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff;">{conf*100:.2f}%</h1>
         </div>
         """, unsafe_allow_html=True)
