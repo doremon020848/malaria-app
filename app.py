@@ -73,13 +73,10 @@ div.stButton > button {
     font-size: 1.1rem !important;
     margin-top: 1rem;
 }
-
-
-/* 3. แถม: Effect เวลาเอาเมาส์ไปวาง ให้มันดูมีมิติ */
 div.stButton > button:hover {
     background: #ffffff !important;
     box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
-    transform: scale(0.55); /* ขยายใหญ่ขึ้นนิดนึงเวลาจ่อเมาส์ */
+    transform: scale(1.01); /* ขยายใหญ่ขึ้นนิดนึงเวลาจ่อเมาส์ */
 }
 
 /* ช่อง Preview รูป */
