@@ -36,7 +36,7 @@ st.markdown("""
 }
 .hero-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 48px !important; /* ลองปรับเลขนี้ดูครับ 32px, 40px, 48px */
+    font-size: 32px !important; /* ลองปรับเลขนี้ดูครับ 32px, 40px, 48px */
     font-weight: 700;
     letter-spacing: 1px; /* ลดระยะห่างตัวอักษรลงหน่อยเพราะชื่อยาว เดี๋ยวล้นจอ */
     background: linear-gradient(180deg, #ffffff, #4da3ff);
