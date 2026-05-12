@@ -1,35 +1,163 @@
+import os
 import streamlit as st
+import tensorflow as tf
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.preprocessing import image
+import numpy as np
+from PIL import Image
 
-# 1. Header
-st.title("MobileNetV2-based Classification of Malaria-Infected Red Blood Cells")
+# --- CONFIGURATION ---
+MODEL_PATH = "best_model_lite.h5" 
+IMG_SIZE = (224, 224)
+SAMPLE_DIR = "samples"
 
-# 2. Sidebar
-with st.sidebar:
-    st.header("Settings")
-    model_name = "MobileNetV2"
-    mode = st.radio("Select Mode", ["Sample Images", "Upload Image"])
-    st.info(f"Current Model: {model_name}")
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
 
-# 3. Main Content
-col1, col2 = st.columns(2)
+# ─── THE SPACESHIP UI (CSS - Vertical Optimized) ──────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
 
-with col1:
-    st.subheader("Input Image")
-    # โชว์รูปที่เลือก
-    st.image(input_img, caption="Selected Cell Image")
+/* พื้นหลังอวกาศมืดสนิท */
+.stApp {
+    background: linear-gradient(180deg, #050a15 0%, #000000 100%);
+    color: #e6f1ff;
+}
 
-with col2:
-    st.subheader("Analysis Result")
-    if st.button("Run Prediction"):
-        # ส่วนเรียกโมเดล Predict
-        result = "Infected" # สมมติ
-        confidence = 0.98
+#MainMenu, footer, header { visibility: hidden; }
+
+/* หัวข้อใหญ่แนวตั้ง */
+.hero-header {
+    text-align: center;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(77, 163, 255, 0.2);
+    margin-bottom: 2rem;
+}
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    background: linear-gradient(180deg, #ffffff, #4da3ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* กล่อง Info Card แบบเรียงแถวเดียว (แนวตั้ง) */
+.info-card-vertical {
+    background: rgba(10, 25, 47, 0.6);
+    border: 1px solid rgba(77, 163, 255, 0.15);
+    border-left: 4px solid #4da3ff;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
+.info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 1rem; }
+
+/* ปุ่ม Action */
+div.stButton > button {
+    width: 100% !important;
+    background: #4da3ff !important;
+    color: #02060c !important;
+    font-family: 'Orbitron', sans-serif !important;
+    height: 3.5rem !important;
+    border-radius: 0 !important;
+    border: none !important;
+    font-size: 1.1rem !important;
+    margin-top: 1rem;
+}
+
+/* ช่อง Preview รูป */
+.img-container {
+    border: 1px solid rgba(77, 163, 255, 0.2);
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+}
+
+/* ผลลัพธ์ (Result) */
+.result-display {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 25px;
+    text-align: center;
+    border: 1px solid rgba(77, 163, 255, 0.2);
+    margin-top: 20px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ─── HEADER ──────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="hero-header">
+    <h1 class="hero-title">A-SPACE</h1>
+    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px;">NEURAL SCANNER V2</p>
+</div>
+""", unsafe_allow_html=True)
+
+# ─── SYSTEM STATUS (แนวตั้ง) ──────────────────────────────────────────────────
+st.markdown('<div class="info-card-vertical"><span class="info-label">Satellite Core</span><span class="info-value">MobileNetV2</span></div>', unsafe_allow_html=True)
+st.markdown('<div class="info-card-vertical"><span class="info-label">Orbit Precision</span><span class="info-value">98.5% AUC</span></div>', unsafe_allow_html=True)
+
+# ─── MODEL LOADING ─────────────────────────────────────────────────────────────
+@st.cache_resource
+def load_my_model():
+    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+
+try:
+    model = load_my_model()
+except:
+    st.error("🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
+    st.stop()
+
+# ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
+st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px;">[ SELECTION_MODE ]</p>', unsafe_allow_html=True)
+mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
+
+img = None
+if mode == "SAMPLES":
+    if os.path.exists(SAMPLE_DIR):
+        files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        choice = st.selectbox("CHOOSE DATASET:", files)
+        if choice:
+            img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
+else:
+    up = st.file_uploader("UPLOAD CELL DATA:", type=["jpg", "png"])
+    if up: img = Image.open(up).convert("RGB")
+
+# ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
+if img:
+    st.markdown('<div class="img-container">', unsafe_allow_html=True)
+    st.image(img, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    if st.button("INITIATE SCAN"):
+        # Preprocess
+        img_p = img.resize(IMG_SIZE)
+        img_arr = image.img_to_array(img_p)
+        img_arr = np.expand_dims(img_arr, axis=0)
+        img_arr = preprocess_input(img_arr)
         
-        # แสดงผลตามเงื่อนไข
-        if result == "Infected":
-            st.error(f"Status: {result}")
-        else:
-            st.success(f"Status: {result}")
-            
-        st.write(f"Confidence Score: {confidence*100:.2f}%")
-        st.progress(confidence)
+        with st.spinner("PROCESSING NEURAL DATA..."):
+            pred = float(model.predict(img_arr)[0][0])
+        
+        is_safe = pred > 0.5
+        conf = pred if is_safe else 1 - pred
+        color = "#00d2b4" if is_safe else "#ff3d6b"
+        status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
+        
+        st.markdown(f"""
+        <div class="result-display">
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0;">SCAN RESULT</p>
+            <h2 style="font-family:Orbitron; color:{color}; margin:0; letter-spacing:2px;">{status}</h2>
+            <div style="margin: 15px 0; height: 1px; background: rgba(77,163,255,0.2);"></div>
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0;">CONFIDENCE LEVEL</p>
+            <h1 style="font-family:Orbitron; font-size:2.5rem; margin:0;">{conf*100:.2f}%</h1>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ─── FOOTER ──────────────────────────────────────────────────────────────────
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; font-family:Rajdhani; color:#4d7a99; font-size:0.7rem; border-top: 0.5px solid rgba(77,163,255,0.1); padding-top:20px;">CREATED BY ไอ้ยี่สิบ · WEB DESIGN 2026 · A-SPACE MISSION</p>', unsafe_allow_html=True)
