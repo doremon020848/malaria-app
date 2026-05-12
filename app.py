@@ -96,6 +96,7 @@ div.stButton > button {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
+    <h1 Lightweight Image classification for Malaria detection using mobilenetv2</h1>
 </div>
 """, unsafe_allow_html=True)
 
