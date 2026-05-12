@@ -69,7 +69,7 @@ div.stButton > button {
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 5px !important;
+    border-radius: 10ppx !important;
     border: none !important;
     font-size: 1.1rem !important;
     margin-top: 1rem;
