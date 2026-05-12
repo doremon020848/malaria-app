@@ -74,18 +74,25 @@ st.markdown("""
 #     margin-top: 1rem;
 # }
 
-/* ปุ่ม Action */
+/* เล็งไปที่กล่องครอบปุ่ม (Container) */
+div.stButton {
+    text-align: center; /* สั่งให้สิ่งที่อยู่ในกล่องนี้อยู่ตรงกลาง */
+}
+
+/* ปรับแต่งตัวปุ่ม */
 div.stButton > button {
-    margin: 2rem auto !important; 
     width: 100% !important; 
-    display: block;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 10px !important; 
+    border-radius: 12px !important; /* ใส่หน่วย px ด้วยนะไอ้ยี่สิบ */
     border: none !important;
     font-size: 1.1rem !important;
+    margin-top: 1rem;
+    
+    /* กรณีอยากให้ชัวร์ว่ามันยอมมาแน่ๆ */
+    display: inline-block !important; 
 }
 
 
