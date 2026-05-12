@@ -112,6 +112,9 @@ div.stButton > button:hover {
     text-align: center;
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
+    text-align: center;
+    display: flex; align-items: center;
+    
 }
 </style>
 """, unsafe_allow_html=True)
@@ -177,7 +180,7 @@ if img:
         st.markdown(f"""
         <div class="result-display">
             <p style="font-family:Rajdhani; color:#8892b0; margin:0;">SCAN RESULT</p>
-            <h2 style="font-family:Orbitron; color:{color}; margin:5px 0; letter-spacing:1px; font-size: 1.5rem;">{status}</h2>
+            <h2 style="font-family:Orbitron; color:{color}; margin:5px 0; letter-spacing:1px; font-size: 2.5rem;">{status}</h2>
             <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 50%;"></div>
             <p style="font-family:Rajdhani; color:#8892b0; margin:0;font-size: 0.7rem;">CONFIDENCE LEVEL</p>
             <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0;color: #ffffff;">{conf*100:.2f}%</h1>
