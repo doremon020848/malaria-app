@@ -61,46 +61,25 @@ st.markdown("""
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
 .info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 1rem; }
 
-# /* ปุ่ม Action */
-# div.stButton > button {
-#     width: 100% !important;
-#     background: #4da3ff !important;
-#     color: #02060c !important;
-#     font-family: 'Orbitron', sans-serif !important;
-#     height: 3.5rem !important;
-#     border-radius: 5 !important;
-#     border: none !important;
-#     font-size: 1.1rem !important;
-#     margin-top: 1rem;
-# }
-
-/* 1. สั่งให้กล่องข้างนอกสุด จัดการเนื้อหาภายในให้ดึงมาไว้ตรงกลาง */
-div.stButton {
-    display: flex !important;
-    justify-content: center !important; /* จัดกลางแนวนอน */
-    align-items: center !important;     /* จัดกลางแนวตั้ง (ถ้ามีพื้นที่) */
-    width: 100% !important;
-    margin: 1rem 0 !important;
-}
-
-/* 2. ตั้งค่าตัวปุ่มให้มีขนาดตามที่ต้องการ (ไม่ให้มันยืดเต็มจอ) */
+/* ปุ่ม Action */
 div.stButton > button {
-    width: 250px !important; /* กำหนดความกว้างคงที่ จะดูเป็นปุ่มมากขึ้น */
+    width: 100% !important;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 12px !important; /* มนๆ ตามที่อยากได้ */
+    border-radius: 5 !important;
     border: none !important;
     font-size: 1.1rem !important;
-    transition: 0.3s !important;
+    margin-top: 1rem;
 }
+
 
 /* 3. แถม: Effect เวลาเอาเมาส์ไปวาง ให้มันดูมีมิติ */
 div.stButton > button:hover {
     background: #ffffff !important;
     box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
-    transform: scale(1.05); /* ขยายใหญ่ขึ้นนิดนึงเวลาจ่อเมาส์ */
+    transform: scale(0.55); /* ขยายใหญ่ขึ้นนิดนึงเวลาจ่อเมาส์ */
 }
 
 /* ช่อง Preview รูป */
