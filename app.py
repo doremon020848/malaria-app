@@ -119,13 +119,13 @@ mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="co
 img = None
 if mode == "SAMPLES":
   if os.path.exists(SAMPLE_DIR):
-        files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        choice = st.selectbox("CHOOSE DATASET:", files)
-        if choice:
-            img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
+    files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    choice = st.selectbox("CHOOSE DATASET:", files)
+    if choice:
+      img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
 else:
-    up = st.file_uploader("UPLOAD CELL DATA:", type=["jpg", "png"])
-    if up: img = Image.open(up).convert("RGB")
+  up = st.file_uploader("UPLOAD CELL DATA:", type=["jpg", "png"])
+  if up: img = Image.open(up).convert("RGB")
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
 if img:
