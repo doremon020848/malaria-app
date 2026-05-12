@@ -61,18 +61,34 @@ st.markdown("""
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
 .info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 1rem; }
 
+# /* ปุ่ม Action */
+# div.stButton > button {
+#     width: 100% !important;
+#     background: #4da3ff !important;
+#     color: #02060c !important;
+#     font-family: 'Orbitron', sans-serif !important;
+#     height: 3.5rem !important;
+#     border-radius: 5 !important;
+#     border: none !important;
+#     font-size: 1.1rem !important;
+#     margin-top: 1rem;
+# }
+
 /* ปุ่ม Action */
 div.stButton > button {
-    width: 100% !important;
+    display: block; 
+    margin: 2rem auto !important; 
+    width: 60% !important; 
+    
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 5 !important;
+    border-radius: 10px !important; 
     border: none !important;
     font-size: 1.1rem !important;
-    margin-top: 1rem;
 }
+
 
 /* ช่อง Preview รูป */
 .img-container {
