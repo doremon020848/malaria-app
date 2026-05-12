@@ -77,8 +77,8 @@ div.stButton {
 }
 
 div.stButton > button {
-    width: 100% !important;       /* ให้มันยืดเต็มที่บนจอมือถือเล็กๆ */
-    max-width: 280px !important;  /* แต่ห้ามกว้างเกิน 280px บนจอใหญ่ */
+    width: 100% !important;       
+    max-width: 280px !important;  
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
@@ -95,7 +95,7 @@ div.stButton > button {
 div.stButton > button:hover {
     background: #ffffff !important;
     box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
-    transform: scale(1.02); /* ขยายขึ้นนิดนึงพอดีๆ */
+    transform: scale(1.02);
 }
 
 /* ช่อง Preview รูป */
@@ -110,10 +110,17 @@ div.stButton > button:hover {
 .result-display {
     background: rgba(255, 255, 255, 0.03);
     padding: 20px;
-    text-align: center;
+    text-align: center !important; /* บังคับกลางตรงนี้ */
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
     width: 100%;
+}
+
+/* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
+.result-display * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 /* =======================================================
@@ -121,14 +128,14 @@ div.stButton > button:hover {
    ======================================================= */
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 26px !important; /* ย่อหัวข้อลงนิดนึงกันล้นจอ */
+        font-size: 26px !important; 
         letter-spacing: 0px !important;
     }
     .hero-header {
-        padding: 1px 0; /* ลดช่องว่างด้านบนลง */
+        padding: 1px 0; 
     }
     .result-display {
-        padding: 15px; /* ลดกรอบผลลัพธ์ให้ดูพอดีมือถือ */
+        padding: 15px; 
     }
 }
 </style>
@@ -154,7 +161,7 @@ except Exception as e:
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px;">SELECTION_MODE</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px; text-align:center;">SELECTION_MODE</p>', unsafe_allow_html=True)
 mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
 
 img = None
@@ -194,10 +201,10 @@ if img:
         
         st.markdown(f"""
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase;">SCAN RESULT</p>
-            <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem;">{status}</h2>
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
+            <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%;">{status}</h2>
             <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase;">CONFIDENCE LEVEL</p>
-            <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff;">{conf*100:.2f}%</h1>
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">CONFIDENCE LEVEL</p>
+            <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff; width:100%;">{conf*100:.2f}%</h1>
         </div>
         """, unsafe_allow_html=True)
