@@ -66,8 +66,8 @@ st.markdown("""
     justify-content: space-between;
     align-items: center;
 }
-.info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.5rem; }
-.info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.4rem; }
+.info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
+.info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.9rem; }
 
 /* --- แก้ไขส่วนปุ่ม Action ให้มาอยู่ตรงกลางจอ --- */
 div.stButton {
