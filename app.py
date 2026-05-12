@@ -63,6 +63,9 @@ st.markdown("""
 
 /* ปุ่ม Action */
 div.stButton > button {
+    display: flex;
+    justify-content: center;
+    
     width: 100% !important;
     background: #4da3ff !important;
     color: #02060c !important;
