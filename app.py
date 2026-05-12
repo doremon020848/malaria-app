@@ -175,11 +175,15 @@ if img:
         status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
         
         st.markdown(f"""
-        <div class="result-display">
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0;">SCAN RESULT</p>
-            <h2 style="font-family:Orbitron; color:{color}; margin:0; letter-spacing:2px;">{status}</h2>
-            <div style="margin: 15px 0; height: 1px; background: rgba(77,163,255,0.2);"></div>
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0;">CONFIDENCE LEVEL</p>
-            <h1 style="font-family:Orbitron; font-size:2rem; margin:0;">{conf*100:.2f}%</h1>
-        </div>
-        """, unsafe_allow_html=True)
+             <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size: 0.8rem; text-transform: uppercase;">SCAN RESULT</p>
+             
+             <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem;">{status}</h2>
+             
+             <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 50%;"></div>
+             
+             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size: 0.7rem; text-transform: uppercase;">CONFIDENCE LEVEL</p>
+             
+             <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color: #ffffff;">{conf*100:.2f}%</h1>
+         </div>
+         """, unsafe_allow_html=True)
