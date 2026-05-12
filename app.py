@@ -40,10 +40,11 @@ st.markdown("""
     font-weight: 700;
     letter-spacing: 1px; /* ลดระยะห่างตัวอักษรลงหน่อยเพราะชื่อยาว เดี๋ยวล้นจอ */
     background: linear-gradient(180deg, #ffffff, #4da3ff);
+    text-transform: uppercase;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: block; /* บังคับให้เป็น block element */
-    line-height: 1.3 !important; /* เพิ่มช่องว่างระหว่างบรรทัดเพราะชื่อยาวจนต้องตัดบรรทัด */
+    display: block; 
+    line-height: 1.3 !important;
     margin: 0 auto;
 }
 /* กล่อง Info Card แบบเรียงแถวเดียว (แนวตั้ง) */
@@ -94,7 +95,7 @@ div.stButton > button {
 # ─── HEADER ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-header">
-    <h1 class="hero-title">Lightweight Image classification for malaria detection using mobilenetv2</h1>
+    <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
 </div>
 """, unsafe_allow_html=True)
 
