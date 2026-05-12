@@ -63,7 +63,7 @@ st.markdown("""
     padding: 15px;
     margin-bottom: 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
