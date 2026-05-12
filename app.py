@@ -36,14 +36,16 @@ st.markdown("""
 }
 .hero-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.7rem;
+    font-size: 32px !important; /* ลองปรับเลขนี้ดูครับ 32px, 40px, 48px */
     font-weight: 700;
-    letter-spacing: 3px;
+    letter-spacing: 1px; /* ลดระยะห่างตัวอักษรลงหน่อยเพราะชื่อยาว เดี๋ยวล้นจอ */
     background: linear-gradient(180deg, #ffffff, #4da3ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    display: block; /* บังคับให้เป็น block element */
+    line-height: 1.3 !important; /* เพิ่มช่องว่างระหว่างบรรทัดเพราะชื่อยาวจนต้องตัดบรรทัด */
+    margin: 0 auto;
 }
-
 /* กล่อง Info Card แบบเรียงแถวเดียว (แนวตั้ง) */
 .info-card-vertical {
     background: rgba(10, 25, 47, 0.6);
