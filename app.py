@@ -20,9 +20,15 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
 
 /* พื้นหลังอวกาศมืดสนิท */
-.stApp {
-    background: linear-gradient(180deg, #050a15 0%, #000000 100%);
-    color: #e6f1ff;
+# .stApp {
+#     background: linear-gradient(180deg, #050a15 0%, #000000 100%);
+#     color: #e6f1ff;
+# }
+.stApp { 
+    display: flex !important;
+    flex-direction: column !important; /* จัดของเรียงกันลงมาเป็นแนวตั้ง */
+    align-items: center !important;    /* หัวใจหลัก: จัดลูกทุกลูกให้อยู่กึ่งกลางแนวนอน */
+    justify-content: flex-start !important; /* เริ่มวางจากด้านบน (หรือ center ถ้าอยากให้กลางดิ่ง) */
 }
 
 #MainMenu, footer, header { visibility: hidden; }
