@@ -31,7 +31,7 @@ st.markdown("""
 .hero-header {
     text-align: center;
     padding: 2rem 0;
-    # border-bottom: 1px solid rgba(77, 163, 255, 0.2);
+    border-bottom: 3px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 2rem;
 }
 .hero-title {
