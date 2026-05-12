@@ -73,27 +73,27 @@ st.markdown("""
 #     font-size: 1.1rem !important;
 #     margin-top: 1rem;
 # }
-
-/* 1. สั่งกล่องแม่ (Container) ให้จัดลูกไว้ตรงกลาง */
+/* 1. คุมกล่องแม่ (Container) ให้จัดการลูกไว้ตรงกลางจอ */
 div.stButton {
     display: flex !important;
-    justify-content: center !important;
+    justify-content: center !important; /* ดันลูกไปกึ่งกลางแนวนอน */
     width: 100% !important;
+    margin-top: 2rem !important;
 }
 
-/* 2. ตั้งค่าตัวปุ่ม (ห้ามใช้ width 100% ไม่งั้นจะมองไม่เห็นว่ามันอยู่กลาง) */
+/* 2. ตั้งค่าตัวปุ่ม (ห้ามใช้ width: 100%) */
 div.stButton > button {
-    width: 280px !important; /* ปรับความกว้างตามชอบ ถ้าตั้ง 100% มันจะเต็มจอพอดี */
+    width: 300px !important; /* กำหนดขนาดปุ่มให้ดูพอดี ไม่ยืดเต็มจอ */
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
-    height: 3.5rem !important;
-    border-radius: 12px !important; /* อย่าลืมใส่หน่วย px นะครับ */
+    height: 3.8rem !important;
+    border-radius: 12px !important; /* ใส่หน่วย px ให้มีความโค้ง */
     border: none !important;
-    font-size: 1.1rem !important;
-    margin-top: 1rem;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
 }
-
 div.stButton > button:hover {
     background: #ffffff !important;
     box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
