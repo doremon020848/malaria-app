@@ -160,7 +160,3 @@ if img:
             <h1 style="font-family:Orbitron; font-size:2.5rem; margin:0;">{conf*100:.2f}%</h1>
         </div>
         """, unsafe_allow_html=True)
-
-# ─── FOOTER ──────────────────────────────────────────────────────────────────
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown('<p style="text-align:center; font-family:Rajdhani; color:#4d7a99; font-size:0.7rem; border-top: 0.5px solid rgba(77,163,255,0.1); padding-top:20px;">CREATED BY ไอ้ยี่สิบ · WEB DESIGN 2026 · A-SPACE MISSION</p>', unsafe_allow_html=True)
