@@ -61,18 +61,39 @@ st.markdown("""
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
 .info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 1rem; }
 
-/* ปุ่ม Action */
-div.stButton > button {
+# /* ปุ่ม Action */
+# div.stButton > button {
+#     width: 100% !important;
+#     background: #4da3ff !important;
+#     color: #02060c !important;
+#     font-family: 'Orbitron', sans-serif !important;
+#     height: 3.5rem !important;
+#     border-radius: 5 !important;
+#     border: none !important;
+#     font-size: 1.1rem !important;
+#     margin-top: 1rem;
+# }
+
+/* 1. สั่งกล่องแม่ (Container) ให้จัดลูกไว้ตรงกลาง */
+div.stButton {
+    display: flex !important;
+    justify-content: center !important;
     width: 100% !important;
+}
+
+/* 2. ตั้งค่าตัวปุ่ม (ห้ามใช้ width 100% ไม่งั้นจะมองไม่เห็นว่ามันอยู่กลาง) */
+div.stButton > button {
+    width: 280px !important; /* ปรับความกว้างตามชอบ ถ้าตั้ง 100% มันจะเต็มจอพอดี */
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
     height: 3.5rem !important;
-    border-radius: 5 !important;
+    border-radius: 12px !important; /* อย่าลืมใส่หน่วย px นะครับ */
     border: none !important;
     font-size: 1.1rem !important;
     margin-top: 1rem;
 }
+
 div.stButton > button:hover {
     background: #ffffff !important;
     box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
