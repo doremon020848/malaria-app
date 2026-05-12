@@ -63,7 +63,7 @@ st.markdown("""
 
 /* ปุ่ม Action */
 div.stButton > button {
-    width: 1000% !important;
+    width: 100% !important;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
@@ -72,6 +72,7 @@ div.stButton > button {
     border: none !important;
     font-size: 1.1rem !important;
     margin-top: 1rem;
+    justify-content: center
 }
 
 div.stButton > button:hover {
