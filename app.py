@@ -76,9 +76,9 @@ st.markdown("""
 
 /* ปุ่ม Action */
 div.stButton > button {
-    margin: 100 !important; 
+    margin: 2rem auto !important; 
     width: 100% !important; 
-    
+    display: block;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Orbitron', sans-serif !important;
