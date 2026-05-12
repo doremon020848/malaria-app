@@ -118,7 +118,7 @@ mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="co
 
 img = None
 if mode == "SAMPLES":
-    if os.path.exists(SAMPLE_DIR):
+  if os.path.exists(SAMPLE_DIR):
         files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         choice = st.selectbox("CHOOSE DATASET:", files)
         if choice:
