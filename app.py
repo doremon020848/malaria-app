@@ -96,7 +96,7 @@ div.stButton > button {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px;">with 98.5% Accuracy</p>
+    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px;">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -112,7 +112,7 @@ except Exception as e:
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px;">[ SELECTION_MODE ]</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px;">SELECTION_MODE</p>', unsafe_allow_html=True)
 mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
 
 img = None
