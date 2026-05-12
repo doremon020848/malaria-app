@@ -121,7 +121,7 @@ div.stButton > button:hover {
    ======================================================= */
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 32px !important; /* ย่อหัวข้อลงนิดนึงกันล้นจอ */
+        font-size: 30px !important; /* ย่อหัวข้อลงนิดนึงกันล้นจอ */
         letter-spacing: 0px !important;
     }
     .hero-header {
