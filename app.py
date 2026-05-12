@@ -100,10 +100,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ─── SYSTEM STATUS (แนวตั้ง) ──────────────────────────────────────────────────
-st.markdown('<div class="info-card-vertical"><span class="info-label">Satellite Core</span><span class="info-value">MobileNetV2</span></div>', unsafe_allow_html=True)
-st.markdown('<div class="info-card-vertical"><span class="info-label">Orbit Precision</span><span class="info-value">98.5% AUC</span></div>', unsafe_allow_html=True)
-
 # ─── MODEL LOADING ─────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_my_model():
