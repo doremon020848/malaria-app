@@ -76,9 +76,8 @@ st.markdown("""
 
 /* ปุ่ม Action */
 div.stButton > button {
-    display: block; 
     margin: 2rem auto !important; 
-    width: 60% !important; 
+    width: 100% !important; 
     
     background: #4da3ff !important;
     color: #02060c !important;
