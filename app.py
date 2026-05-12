@@ -72,7 +72,6 @@ div.stButton > button {
     border: none !important;
     font-size: 1.1rem !important;
     margin-top: 1rem;
-    justify-content: center
 }
 
 div.stButton > button:hover {
