@@ -37,7 +37,7 @@ st.markdown("""
 .hero-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 1.7rem;
-    font-weight: 100;
+    font-weight: 700;
     letter-spacing: 3px;
     background: linear-gradient(180deg, #ffffff, #4da3ff);
     -webkit-background-clip: text;
