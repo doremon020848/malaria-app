@@ -113,7 +113,6 @@ div.stButton > button:hover {
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
     text-align: center;
-    display: flex; align-items: center;
     
 }
 </style>
