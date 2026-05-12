@@ -26,9 +26,11 @@ st.markdown("""
 # }
 .stApp { 
     display: flex !important;
-    flex-direction: column !important; /* จัดของเรียงกันลงมาเป็นแนวตั้ง */
-    align-items: center !important;    /* หัวใจหลัก: จัดลูกทุกลูกให้อยู่กึ่งกลางแนวนอน */
-    justify-content: flex-start !important; /* เริ่มวางจากด้านบน (หรือ center ถ้าอยากให้กลางดิ่ง) */
+    flex-direction: column !important; 
+    align-items: center !important;  
+    justify-content: center !important; 
+    background: linear-gradient(180deg, #050a15 0%, #000000 100%);
+    color: #e6f1ff;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
