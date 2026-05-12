@@ -32,7 +32,7 @@ st.markdown("""
     text-align: center;
     padding: 2rem 0;
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
-    margin-bottom: 20rem;
+    margin-bottom: 2rem;
 }
 .hero-title {
     font-family: 'Orbitron', sans-serif;
