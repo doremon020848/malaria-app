@@ -1,153 +1,195 @@
-import os
 import streamlit as st
-import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-from tensorflow.keras.preprocessing import image
-import numpy as np
+import os
 from PIL import Image
-
-# --- CONFIGURATION ---
-MODEL_PATH = "best_model_lite.h5" 
-IMG_SIZE = (224, 224)
-SAMPLE_DIR = "samples"
+import numpy as np
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="Malaria Detection System", layout="centered")
+st.set_page_config(page_title="Malaria Detection UI", layout="centered")
 
-# ─── MEDICAL CLEAN UI (CSS) ──────────────────────────────
+# --- CUSTOM CSS (เวทมนตร์เสก UI) ---
 st.markdown("""
 <style>
-/* พื้นหลังสีฟ้าเทาอ่อนๆ ให้ฟีลสะอาดแบบโรงพยาบาล */
+/* พื้นหลังสีฟ้า/เทาพาสเทลแบบในรูป */
 .stApp {
-    background-color: #f4f7f9;
+    background-color: #dbe4f0;
 }
 
-#MainMenu, footer, header { visibility: hidden; }
+/* ซ่อนเมนู Streamlit ให้ดูเป็น Web App จริงๆ */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
 
-/* หัวข้อโปรเจกต์ */
-.header-container {
+/* หัวข้อ (Header) - สีม่วงเข้ม */
+.main-header {
     text-align: center;
-    padding: 30px 0;
+    color: #463c6d;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    line-height: 1.3;
 }
-.main-title {
-    font-family: 'Helvetica Neue', sans-serif;
+
+/* Label เล็กๆ เหนือ Input */
+.input-label {
+    font-size: 0.9rem;
     color: #2c3e50;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1.4;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-transform: uppercase;
 }
 
-/* ส่วนของ Selection Mode */
-.mode-container {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 10px;
-}
-
-/* กล่องขาวสำหรับเนื้อหา */
-.content-card {
+/* กล่องการ์ดสีขาว (Card) */
+.white-card {
     background-color: #ffffff;
     border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #e1e8ed;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     margin-bottom: 20px;
+    text-align: center;
 }
 
-/* ปุ่ม Analysis สไตล์โปร */
-div.stButton > button {
-    width: 100% !important;
-    background: linear-gradient(90deg, #4da3ff, #6a82fb) !important;
-    color: white !important;
-    border: none !important;
-    height: 3.5rem !important;
-    border-radius: 8px !important;
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
+/* คำอธิบายใต้ภาพ */
+.img-caption {
+    font-size: 0.8rem;
+    color: #34495e;
+    font-weight: 600;
     margin-top: 10px;
 }
 
-/* Result Box */
-.result-card {
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 20px;
+/* ปุ่มสีม่วงพาสเทล (Button) */
+div.stButton > button {
+    width: 100%;
+    background-color: #a497d5 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 30px !important;
+    padding: 15px 0 !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 6px rgba(164, 151, 213, 0.4) !important;
+    transition: 0.3s;
+}
+div.stButton > button:hover {
+    background-color: #8a7abf !important;
+}
+
+/* กล่องผลลัพธ์ (Result Cards) */
+.result-box {
+    background: linear-gradient(180deg, #ffffff 40%, #95d4e8 100%);
+    border-radius: 12px;
+    padding: 20px 10px;
     text-align: center;
-    border-top: 4px solid #4da3ff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e1e8ed;
+    height: 100%;
+}
+.result-box.purple-grad {
+    background: linear-gradient(180deg, #ffffff 40%, #b2a8db 100%);
+}
+.result-title {
+    font-size: 0.8rem;
+    color: #34495e;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.result-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin: 0;
+}
+.result-sub {
+    font-size: 0.9rem;
+    color: #2c3e50;
+    font-weight: 600;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── HEADER ──────────────────────────────────────────────────────────────────
+# --- 1. HEADER ---
 st.markdown("""
-<div class="header-container">
-    <h1 class="main-title">LIGHTWEIGHT IMAGE CLASSIFICATION FOR<br>MALARIA DETECTION USING MOBILENETV2</h1>
+<div class="main-header">
+    LIGHTWEIGHT IMAGE CLASSIFICATION FOR<br>MALARIA DETECTION USING MOBILENETV2
 </div>
 """, unsafe_allow_html=True)
 
-# ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-col_input, col_dataset = st.columns([1, 1])
+# --- 2. CONTROLS (SELECTION & DATASET) ---
+col1, col2 = st.columns(2)
 
-with col_input:
-    st.markdown('**SELECTION MODE**')
-    # ปรับเป็น Radio สไตล์มินิมอลแทน Checkbox เพื่อให้เลือกได้อย่างใดอย่างหนึ่งตามปกติของ UI
-    mode = st.radio("", ["Samples", "Upload"], horizontal=True, label_visibility="collapsed")
+with col1:
+    st.markdown('<div class="input-label">SELECTION MODE</div>', unsafe_allow_html=True)
+    # ใช้ Radio แนบไปเลย streamlit มันจัดการให้เป็นแนวนอนได้
+    mode = st.radio("Mode", ["Samples", "Upload"], horizontal=True, label_visibility="collapsed")
 
-with col_dataset:
-    st.markdown('**CHOOSE DATASET**')
+with col2:
+    st.markdown('<div class="input-label">CHOOSE DATASET</div>', unsafe_allow_html=True)
+    img_to_predict = None
+    
     if mode == "Samples":
-        if os.path.exists(SAMPLE_DIR):
-            files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-            choice = st.selectbox("", files, label_visibility="collapsed")
-            img_path = os.path.join(SAMPLE_DIR, choice) if choice else None
-            if img_path: img = Image.open(img_path).convert("RGB")
-        else:
-            st.error("Sample folder not found.")
-            img = None
+        # จำลองการเลือกไฟล์ Sample
+        sample_choice = st.selectbox("Samples", ["Image_001.jpg", "Image_002.jpg"], label_visibility="collapsed")
+        # ตรงนี้มึงไปผูก logic โหลดรูปจากโฟลเดอร์ของมึงเองนะ
+        # img_to_predict = Image.open(f"samples/{sample_choice}")
+        st.info("💡 (ใส่รูปตัวอย่างเพื่อทดสอบระบบ)")
     else:
-        up = st.file_uploader("", type=["jpg", "png"], label_visibility="collapsed")
-        img = Image.open(up).convert("RGB") if up else None
+        uploaded_file = st.file_uploader("Upload", type=['png', 'jpg', 'jpeg'], label_visibility="collapsed")
+        if uploaded_file is not None:
+            img_to_predict = Image.open(uploaded_file)
 
-# ─── IMAGE DISPLAY & ANALYSIS ────────────────────────────────────────────────
-if img:
-    st.markdown('<div class="content-card">', unsafe_allow_html=True)
-    st.image(img, use_container_width=True, caption="Selected Red Blood Cell Microscope Image")
-    st.markdown('</div>', unsafe_allow_html=True)
+# --- 3. IMAGE PREVIEW ---
+# กูทำกล่องขาวๆ ไว้รอรับรูป ถ้ามีรูปลงมาก็โชว์
+st.markdown('<div class="white-card">', unsafe_allow_html=True)
+if img_to_predict is not None:
+    st.image(img_to_predict, use_container_width=True)
+    st.markdown('<div class="img-caption">[ SELECTED RED BLOOD CELL MICROSCOPE IMAGE ]</div>', unsafe_allow_html=True)
+else:
+    st.markdown('<div style="height: 200px; display: flex; align-items: center; justify-content: center; color: #a0aec0;">[ กรุณาเลือกหรืออัปโหลดรูปภาพเซลล์เม็ดเลือดแดง ]</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("START MALARIA DIAGNOSIS ANALYSIS"):
-        # --- (Place your Model Prediction Logic here) ---
-        # สมมติผลลัพธ์
-        status = "POSITIVE (Malaria Infected)"
-        confidence = 98.45
-        color = "#e74c3c" # สีแดงสำหรับติดเชื้อ
+# --- 4. ACTION BUTTON ---
+# ทำปุ่มกดยาวๆ ตามรูปเป๊ะ
+analyze_clicked = st.button("START MALARIA DIAGNOSIS ANALYSIS")
+
+# --- 5. RESULTS ---
+st.markdown('<div class="input-label" style="margin-top: 20px;">Analysis result</div>', unsafe_allow_html=True)
+
+# ถ้ากดปุ่มแล้ว ค่อยโชว์ผล
+if analyze_clicked:
+    # --- ตรงนี้คือที่ที่มึงต้องเอาโมเดล MobileNetV2 มารัน Predict ---
+    # สมมติผลลัพธ์ว่าติดเชื้อละกัน
+    mock_status = "POSITIVE"
+    mock_sub = "(Malaria Infected)"
+    mock_confidence = "98.45%"
+    
+    # แบ่ง 2 คอลัมน์เพราะตัด Analysis Quality ออกไปแล้ว
+    res_col1, res_col2 = st.columns(2)
+    
+    with res_col1:
+        st.markdown(f"""
+        <div class="result-box">
+            <div class="result-title">⊕ DIAGNOSIS RESULT</div>
+            <p class="result-value">{mock_status}</p>
+            <p class="result-sub">{mock_sub}</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        # ─── RESULTS DISPLAY (เหลือ 2 คอลัมน์ตามสั่ง) ──────────────────────────
-        st.markdown('<br>', unsafe_allow_html=True)
-        res_col1, res_col2 = st.columns(2)
-        
-        with res_col1:
-            st.markdown(f"""
-            <div class="result-card">
-                <p style="color:#7f8c8d; font-size:0.9rem; margin-bottom:5px;">DIAGNOSIS RESULT</p>
-                <h3 style="color:{color}; margin:0;">{status}</h3>
-            </div>
-            """, unsafe_allow_html=True)
-            
-        with res_col2:
-            st.markdown(f"""
-            <div class="result-card">
-                <p style="color:#7f8c8d; font-size:0.9rem; margin-bottom:5px;">CONFIDENCE LEVEL</p>
-                <h3 style="color:#2c3e50; margin:0;">{confidence}%</h3>
-            </div>
-            """, unsafe_allow_html=True)
-
-        # ─── GRAD-CAM SECTION ────────────────────────────────────────────────
-        st.markdown('<br>**GRAD-CAM VISUALIZATION**', unsafe_allow_html=True)
-        st.markdown("""
-        <div class="content-card" style="text-align:center; min-height:200px; color:#bdc3c7;">
-            [ Heatmap Visualization ]
+    with res_col2:
+        st.markdown(f"""
+        <div class="result-box purple-grad">
+            <div class="result-title">% CONFIDENCE LEVEL</div>
+            <p class="result-value" style="margin-top: 10px;">{mock_confidence}</p>
         </div>
         """, unsafe_allow_html=True)
 
-# ลบส่วน Contact us ออกเรียบร้อยตามบรีฟ
+    # --- 6. GRAD-CAM ---
+    st.markdown('<div class="input-label" style="margin-top: 30px;">GRAD-CAM VISUALIZATION</div>', unsafe_allow_html=True)
+    st.markdown('<div class="white-card">', unsafe_allow_html=True)
+    
+    # โชว์รูป Grad-CAM ตรงนี้ (ถ้ามึงเขียนฟังก์ชันเสร็จแล้วเอาตัวแปรภาพมาใส่แทน placeholder นี้)
+    st.markdown('<div style="height: 150px; background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">[ รูปภาพ Heatmap ของโมเดลจะโชว์ตรงนี้ ]</div>', unsafe_allow_html=True)
+    
+    st.markdown('<div class="img-caption">[ HEATMAP INDICATES AREAS OF POSSIBLE INFECTION ]</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
