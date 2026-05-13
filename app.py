@@ -174,7 +174,7 @@ else:
 if img:
     st.markdown('<div class="img-container">', unsafe_allow_html=True)
     st.image(img, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button("START ANALYTICS"):
         # Preprocess
