@@ -127,7 +127,7 @@ if mode == "SAMPLES":
     if os.path.exists(SAMPLE_DIR):
         files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         if files:
-            st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">CHOOSE DATASET:</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">CHOOSE DATASET</p>', unsafe_allow_html=True)
             choice = st.selectbox("", files, label_visibility="collapsed")
             if choice:
                 img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
