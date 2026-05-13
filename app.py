@@ -163,6 +163,7 @@ else:
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
 if img:
+    st.markdown('',unsafe_allow_html=True)
     st.image(img, use_container_width=True)
     
     if st.button("START ANALYTICS"):
