@@ -58,6 +58,16 @@ st.markdown("""
     pointer-events: none;
 }
 
+.hero-subtitle {
+    font-family: 'Inter', sans-serif !important;
+    color: #67A8E6 !important;
+    letter-spacing: 1px !important;
+    margin-top: 5px !important;
+    font-weight: 400 !important;
+    font-size: 12px !important; 
+    text-align: center !important;
+}
+
 /* --- แก้ไขปุ่ม Action --- */
 div.stButton {
     display: flex !important;
@@ -125,7 +135,7 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:'Inter', sans-serif; color:#67A8E6; letter-spacing:1px; margin-top:0px; font-weight: 400; font-size: 14px !important;">with 98.5% Precision</p>
+    <p class="hero-subtitle">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
 
