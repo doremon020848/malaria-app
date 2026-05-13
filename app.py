@@ -17,7 +17,8 @@ st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered
 # ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+/* กูเปลี่ยนมาใช้ Montserrat กับ Inter ให้เหมือนในรูปมึง */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
 /* พื้นหลังอวกาศมืดสนิทและจับให้อยู่ตรงกลาง */
 .stApp { 
@@ -40,7 +41,7 @@ st.markdown("""
     width: 100%;
 }
 .hero-title {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 32px !important;
     font-weight: 700;
     letter-spacing: 1px;
@@ -65,8 +66,8 @@ st.markdown("""
     align-items: center;
     width: 100%;
 }
-.info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
-.info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.9rem; }
+.info-label { font-family: 'Inter', sans-serif; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; font-weight: 500; }
+.info-value { font-family: 'Montserrat', sans-serif; color: #4da3ff; font-size: 0.9rem; font-weight: 600; }
 
 /* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
 div.stButton {
@@ -77,11 +78,11 @@ div.stButton {
 }
 
 div.stButton > button {
-    width: 100% !important;       
+    width: 100% !important;        
     max-width: 280px !important;  
     background: #4da3ff !important;
     color: #02060c !important;
-    font-family: 'Orbitron', sans-serif !important;
+    font-family: 'Montserrat', sans-serif !important;
     height: 3.8rem !important;
     border-radius: 8px !important;
     border: none !important;
@@ -145,7 +146,7 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px; margin-top:10px;">with 98.5% Precision</p>
+    <p style="font-family:'Inter', sans-serif; color:#4da3ff; letter-spacing:1px; margin-top:10px; font-weight: 500;">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -161,7 +162,7 @@ except Exception as e:
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px; text-align:center;">SELECTION_MODE</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-family:\'Montserrat\', sans-serif; font-size:0.8rem; margin-top:20px; text-align:center; font-weight:600;">SELECTION_MODE</p>', unsafe_allow_html=True)
 mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
 
 img = None
@@ -201,10 +202,10 @@ if img:
         
         st.markdown(f"""
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
-            <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%;">{status}</h2>
+            <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%; font-weight:500;">SCAN RESULT</p>
+            <h2 style="font-family:'Montserrat', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%; font-weight:700;">{status}</h2>
             <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
-            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">CONFIDENCE LEVEL</p>
-            <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff; width:100%;">{conf*100:.2f}%</h1>
+            <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%; font-weight:500;">CONFIDENCE LEVEL</p>
+            <h1 style="font-family:'Montserrat', sans-serif; font-size:1.8rem; margin:0; color:#ffffff; width:100%; font-weight:700;">{conf*100:.2f}%</h1>
         </div>
         """, unsafe_allow_html=True)
