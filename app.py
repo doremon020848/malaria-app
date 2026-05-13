@@ -169,7 +169,7 @@ if mode == "SAMPLES":
         files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         if files:
             st.markdown('<p style="font-family:\'Inter\', sans-serif; font-size:1rem; font-weight:500; color:#8892b0; margin-bottom:-10px;">CHOOSE DATASET:</p>', unsafe_allow_html=True)
-            choice = st.selectbox("CHOOSE DATASET:", files)
+            choice = st.selectbox(, files)
             if choice:
                 img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
         else:
