@@ -19,17 +19,29 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
+/* ซ่อนพวกขยะของ Streamlit ปกติ */
+#MainMenu, footer, header { visibility: hidden; }
+
+/* แฮก Streamlit: ลดขอบขาวซ้ายขวาในมือถือให้มีพื้นที่แสดงผลเยอะขึ้น */
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
 .hero-header {
     text-align: center;
-    padding: 16px 5%; 
+    padding: 16px 0; 
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 1.5rem;
     width: 100%;
 }
+
 .hero-title {
     font-family: 'Montserrat', sans-serif;
-    /* ใช้ clamp แทน px ธรรมดา */
-    font-size: clamp(24px, 5vw, 36px) !important; 
+    /* ให้ clamp() คำนวณอัตโนมัติ ไม่ต้องไปฟิกซ์ขนาดใน @media แล้ว */
+    font-size: clamp(22px, 6vw, 36px) !important; 
     font-weight: 700;
     letter-spacing: 1px;
     background: linear-gradient(180deg, #ffffff, #4da3ff);
@@ -39,12 +51,10 @@ st.markdown("""
     display: block; 
     line-height: 1.3 !important;
     margin: 0 auto;
-    
-    /* แถมให้: ช่วยให้คำมันตัดพอดีขอบ ไม่ทะลัก */
+    /* ตัดคำไม่ให้ทะลักจอ */
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
-
 
 /* --- แก้ไขปุ่ม Action --- */
 div.stButton {
@@ -56,11 +66,11 @@ div.stButton {
 
 div.stButton > button {
     width: 100% !important;        
-    max-width: 280px !important;  
+    max-width: 320px !important; /* ขยายขนาดรับนิ้วคนกดในมือถือ */
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Montserrat', sans-serif !important;
-    height: 3.8rem !important;
+    height: 3.5rem !important;
     border-radius: 8px !important;
     border: none !important;
     font-size: 1.1rem !important;
@@ -80,7 +90,8 @@ div.stButton > button:hover {
     background: rgba(255, 255, 255, 0.05) !important;
     padding: 20px;
     text-align: left !important; 
-    border: 0px #solid rgba(77, 163, 255, 0.2);
+    /* กูเอา # หน้า solid ออกให้แล้ว สัสเอ๊ย เกือบพัง */
+    border: 1px solid rgba(77, 163, 255, 0.2); 
     margin-top: 30px;
     border-radius: 10px; 
     width: 100%;
@@ -88,7 +99,9 @@ div.stButton > button:hover {
 
 /* ช่อง Preview รูป */
 .img-container {
-    border: 0px solid rgba(77, 163, 255, 0.2);
+    border: 1px solid rgba(77, 163, 255, 0.2);
+    border-radius: 8px; /* เพิ่มขอบมนให้รูปดูแพงขึ้น */
+    overflow: hidden; /* ตัดขอบรูปที่ล้นให้มนตามกล่อง */
     padding: 0px;
     background: rgba(0,0,0,0.5);
     width: 100%;
@@ -99,14 +112,19 @@ div.stButton > button:hover {
    ======================================================= */
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 26px !important; 
+        /* ลบ font-size ออก ให้ clamp ทำงานอย่างเดียว */
         letter-spacing: 0px !important;
     }
     .hero-header {
-        padding: 1px 0; 
+        padding: 5px 0; 
     }
     .result-display {
         padding: 15px; 
+        margin-top: 20px;
+    }
+    div.stButton > button {
+        height: 3.2rem !important; /* ย่อปุ่มนิดนึงไม่ให้เทอะทะไป */
+        font-size: 1rem !important;
     }
 }
 </style>
