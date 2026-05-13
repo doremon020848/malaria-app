@@ -134,7 +134,7 @@ if mode == "SAMPLES":
         else:
             st.warning("No samples found in directory.")
 else:
-    st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">UPLOAD CELL DATA:</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">UPLOAD CELL DATA</p>', unsafe_allow_html=True)
     up = st.file_uploader("", type=["jpg", "png"], label_visibility='collapsed')
     if up: img = Image.open(up).convert("RGB")
 
