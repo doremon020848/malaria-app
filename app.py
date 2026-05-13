@@ -19,16 +19,14 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
-/* ซ่อนพวกขยะของ Streamlit ปกติ */
 #MainMenu, footer, header { visibility: hidden; }
 
-/* แฮก Streamlit: ลดขอบขาวซ้ายขวาในมือถือให้มีพื้นที่แสดงผลเยอะขึ้น */
-.block-container {
-    padding-top: 2rem !important;
-    padding-bottom: 2rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-}
+# .block-container {
+#     padding-top: 2rem !important;
+#     padding-bottom: 2rem !important;
+#     padding-left: 1rem !important;
+#     padding-right: 1rem !important;
+# }
 
 .hero-header {
     text-align: center;
