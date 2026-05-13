@@ -161,7 +161,7 @@ if img:
             status = "NORMAL CELL" if is_safe else "INFECTED DETECTED"
             
             st.markdown(f"""
-                <div style="text-align: center; background: #0e1117; padding: 20px; border-radius: 10px;">
+                <div style="text-align: left; background: #0e1117; padding: 20px; border-radius: 10px;">
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">SCAN RESULT</p>
                     <h2 style="font-family:'Inter', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; font-weight:700;">{status}</h2>
                     <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 90%;"></div>
