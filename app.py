@@ -38,7 +38,7 @@ st.markdown("""
     width: 100%;
 }
 .hero-header a {
-display: none !important;
+    display: none !important;
 }
 
 .hero-title {
