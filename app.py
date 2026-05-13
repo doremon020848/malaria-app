@@ -101,9 +101,7 @@ div.stButton > button:hover {
 
 /* ช่อง Preview รูป */
 .img-container {
-    # border: 1px solid rgba(77, 163, 255, 0.2);
-    border-radius: 8px; /* เพิ่มขอบมนให้รูปดูแพงขึ้น */
-    overflow: hidden; /* ตัดขอบรูปที่ล้นให้มนตามกล่อง */
+    overflow: hidden; 
     padding: 0px;
     background: rgba(0,0,0,0.5);
     width: 100%;
