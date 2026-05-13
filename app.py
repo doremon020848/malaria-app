@@ -198,10 +198,16 @@ if img:
         is_safe = pred > 0.5
         conf = pred if is_safe else 1 - pred
         color = "#00d2b4" if is_safe else "#ff3d6b"
-        status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
+        status = "NORMAL CELL" if is_safe else "INFECTED DETECTED"
         # Montserrat
         st.markdown(f"""
-        <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="result-display" 
+            style="display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            justify-content: center;">
+         
             <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%; font-weight:500;">SCAN RESULT</p>
             <h2 style="font-family:'Inter', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%; font-weight:700;">{status}</h2>
             <div style="margin: 10px auto; height: 1px;Inter background: rgba(77,163,255,0.2); width: 100%;"></div>
