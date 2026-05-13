@@ -22,9 +22,6 @@ st.markdown("""
 #MainMenu, footer, header { visibility: hidden; }
 
 
-div[data-testid="stHorizontalBlock"] {
-    border: none !important;
-}
 
 .block-container {
     padding-top: 2rem !important;
