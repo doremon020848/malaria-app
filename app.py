@@ -30,13 +30,15 @@ st.markdown("""
     padding-right: 1rem !important;
 }
 
-.hero-header a {
+.hero-header {
     text-align: center;
     padding: 16px 0; 
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 1.5rem;
     width: 100%;
-    display: none !important;
+}
+.hero-header a {
+display: none !important;
 }
 
 .hero-title {
