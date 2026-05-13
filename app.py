@@ -21,12 +21,17 @@ st.markdown("""
 
 #MainMenu, footer, header { visibility: hidden; }
 
-# .block-container {
-#     padding-top: 2rem !important;
-#     padding-bottom: 2rem !important;
-#     padding-left: 1rem !important;
-#     padding-right: 1rem !important;
-# }
+
+div[data-testid="stHorizontalBlock"] {
+    border: none !important;
+}
+
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
 
 .hero-header {
     text-align: center;
