@@ -134,7 +134,7 @@ div.stButton > button:hover {
 # ─── HEADER ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-header">
-    <h1 class="hero-title">Lightweight Image classification for\nMalaria detection using mobilenetv2</h1>
+    <h1 class="hero-title">Lightweight Image classification for\nMalaria detection \nusing mobilenetv2</h1>
     <p class="hero-subtitle">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
