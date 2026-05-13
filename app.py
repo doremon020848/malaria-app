@@ -77,7 +77,7 @@ div.stButton > button:hover {
     background: rgba(255, 255, 255, 0.05) !important;
     padding: 20px;
     text-align: left !important; 
-    border: 1px solid rgba(77, 163, 255, 0.2);
+    border: 0px #solid rgba(77, 163, 255, 0.2);
     margin-top: 30px;
     border-radius: 10px; 
     width: 100%;
