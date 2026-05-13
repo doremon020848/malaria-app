@@ -63,12 +63,12 @@ div.stButton {
     display: flex !important;
     justify-content: center !important;
     width: 100% !important;
-    margin-top: 1rem !important;
+    margin-top: 0.5rem !important;
 }
 
 div.stButton > button {
     width: 100% !important;        
-    max-width: 320px !important; /* ขยายขนาดรับนิ้วคนกดในมือถือ */
+    max-width: 320px !important;
     background: #4da3ff !important;
     color: #02060c !important;
     font-family: 'Montserrat', sans-serif !important;
@@ -114,7 +114,6 @@ div.stButton > button:hover {
    ======================================================= */
 @media (max-width: 768px) {
     .hero-title {
-        /* ลบ font-size ออก ให้ clamp ทำงานอย่างเดียว */
         letter-spacing: 0px !important;
     }
     .hero-header {
