@@ -92,7 +92,6 @@ div.stButton > button:hover {
     background: rgba(255, 255, 255, 0.05) !important;
     padding: 20px;
     text-align: left !important; 
-    /* กูเอา # หน้า solid ออกให้แล้ว สัสเอ๊ย เกือบพัง */
     border: 1px solid rgba(77, 163, 255, 0.2); 
     margin-top: 30px;
     border-radius: 10px; 
@@ -115,7 +114,7 @@ div.stButton > button:hover {
         margin-top: 20px;
     }
     div.stButton > button {
-        height: 3.2rem !important; /* ย่อปุ่มนิดนึงไม่ให้เทอะทะไป */
+        height: 3.2rem !important;
         font-size: 1rem !important;
     }
 }
@@ -126,7 +125,7 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:'Inter', sans-serif; color:#4da3ff; letter-spacing:1px; margin-top:10px; font-weight: 400; font-size: 0.85rem !important;">with 98.5% Precision</p>
+    <p style="font-family:'Inter', sans-serif; color:#67A8E6; letter-spacing:1px; margin-top:10px; font-weight: 400; font-size: 0.85rem !important;">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
 
