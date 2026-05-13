@@ -43,20 +43,8 @@ st.markdown("""
     /* แถมให้: ช่วยให้คำมันตัดพอดีขอบ ไม่ทะลัก */
     word-wrap: break-word;
     overflow-wrap: break-word;
-# }
-# .hero-title {
-#     font-family: 'Montserrat', sans-serif;
-#     font-size: 32px !important;
-#     font-weight: 700;
-#     letter-spacing: 1px;
-#     background: linear-gradient(180deg, #ffffff, #4da3ff);
-#     text-transform: uppercase;
-#     -webkit-background-clip: text;
-#     -webkit-text-fill-color: transparent;
-#     display: block; 
-#     line-height: 1.3 !important;
-#     margin: 0 auto;
-# }
+}
+
 
 /* --- แก้ไขปุ่ม Action --- */
 div.stButton {
