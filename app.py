@@ -16,17 +16,8 @@ st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered
 
 # ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
-
-.stApp { 
-    display: flex !important;
-    flex-direction: column !important; 
-    align-items: center !important;  
-    justify-content: flex-start !important; 
-    background: linear-gradient(180deg, #050a15 0%, #000000 100%);
-    color: #e6f1ff;
-}
+# <style>
+# @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
 #MainMenu, footer, header { visibility: hidden; }
 
@@ -51,21 +42,6 @@ st.markdown("""
     line-height: 1.3 !important;
     margin: 0 auto;
 }
-
-# /* กล่อง Info Card แบบเรียงแถวเดียว */
-# .info-card-vertical {
-#     background: rgba(10, 25, 47, 0.6);
-#     border: 1px solid rgba(77, 163, 255, 0.15);
-#     border-left: 4px solid #4da3ff;
-#     padding: 15px; 
-#     margin-bottom: 10px;
-#     display: flex;
-#     justify-content: space-between;
-#     align-items: center;
-#     width: 100%;
-# }
-# .info-label { font-family: 'Inter', sans-serif; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; font-weight: 500; }
-# .info-value { font-family: 'Montserrat', sans-serif; color: #4da3ff; font-size: 0.9rem; font-weight: 600; }
 
 /* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
 div.stButton {
