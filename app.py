@@ -113,7 +113,7 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:'Inter', sans-serif; color:#4da3ff; letter-spacing:1px; margin-top:10px; font-weight: 100; font-size: 0px !important;">with 98.5% Precision</p>
+    <p style="font-family:'Inter', sans-serif; color:#4da3ff; letter-spacing:1px; margin-top:10px; font-weight: 400; font-size: 16px !important;">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
 
