@@ -30,7 +30,7 @@ st.markdown("""
     width: 100%;
 }
 .hero-title {
-    font-family: '', sans-serif; #Montserrat
+    font-family: 'Montserrat', sans-serif;
     font-size: 32px !important;
     font-weight: 700;
     letter-spacing: 1px;
