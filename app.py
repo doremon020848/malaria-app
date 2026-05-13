@@ -19,7 +19,15 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
+.hero-header {
+    text-align: center;
+    padding: 16px 5%; 
+    border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
 .hero-title {
+    /* เล็กสุดไม่ต่ำกว่า 24px, ปกติ 5% ของจอ, ใหญ่สุดไม่เกิน 40px */
     font-size: clamp(24px, 5vw, 40px) !important;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
@@ -27,20 +35,19 @@ st.markdown("""
     text-align: center;
     width: 100%;
 }
-
-.hero-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 32px !important;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: linear-gradient(180deg, #ffffff, #4da3ff);
-    text-transform: uppercase;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: block; 
-    line-height: 1.3 !important;
-    margin: 0 auto;
-}
+# .hero-title {
+#     font-family: 'Montserrat', sans-serif;
+#     font-size: 32px !important;
+#     font-weight: 700;
+#     letter-spacing: 1px;
+#     background: linear-gradient(180deg, #ffffff, #4da3ff);
+#     text-transform: uppercase;
+#     -webkit-background-clip: text;
+#     -webkit-text-fill-color: transparent;
+#     display: block; 
+#     line-height: 1.3 !important;
+#     margin: 0 auto;
+# }
 
 /* --- แก้ไขปุ่ม Action --- */
 div.stButton {
