@@ -99,13 +99,6 @@ div.stButton > button:hover {
     width: 100%;
 }
 
-/* ช่อง Preview รูป */
-.img-container {
-    overflow: hidden; 
-    padding: 0px;
-    background: rgba(0,0,0,0.5);
-    width: 100%;
-}
 
 /* =======================================================
                        MOBILE RESPONSIVE
@@ -170,9 +163,7 @@ else:
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
 if img:
-    st.markdown('<div class="img-container">', unsafe_allow_html=True)
     st.image(img, use_container_width=True)
-    # st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button("START ANALYTICS"):
         # Preprocess
