@@ -52,20 +52,20 @@ st.markdown("""
     margin: 0 auto;
 }
 
-/* กล่อง Info Card แบบเรียงแถวเดียว */
-.info-card-vertical {
-    background: rgba(10, 25, 47, 0.6);
-    border: 1px solid rgba(77, 163, 255, 0.15);
-    border-left: 4px solid #4da3ff;
-    padding: 15px; 
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-.info-label { font-family: 'Inter', sans-serif; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; font-weight: 500; }
-.info-value { font-family: 'Montserrat', sans-serif; color: #4da3ff; font-size: 0.9rem; font-weight: 600; }
+# /* กล่อง Info Card แบบเรียงแถวเดียว */
+# .info-card-vertical {
+#     background: rgba(10, 25, 47, 0.6);
+#     border: 1px solid rgba(77, 163, 255, 0.15);
+#     border-left: 4px solid #4da3ff;
+#     padding: 15px; 
+#     margin-bottom: 10px;
+#     display: flex;
+#     justify-content: space-between;
+#     align-items: center;
+#     width: 100%;
+# }
+# .info-label { font-family: 'Inter', sans-serif; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; font-weight: 500; }
+# .info-value { font-family: 'Montserrat', sans-serif; color: #4da3ff; font-size: 0.9rem; font-weight: 600; }
 
 /* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
 div.stButton {
@@ -103,23 +103,6 @@ div.stButton > button:hover {
     padding: 0px;
     background: rgba(0,0,0,0.5);
     width: 100%;
-}
-
-/* ผลลัพธ์ (Result) */
-# .result-display {
-#     background: rgba(255, 255, 255, 0.03);
-#     padding: 20px;
-#     text-align: center !important; 
-#     border: 1px solid rgba(77, 163, 255, 0.2);
-#     margin-top: 20px;
-#     width: 100%;
-# }
-
-/* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
-.result-display * {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
 }
 
 /* =======================================================
