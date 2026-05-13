@@ -19,13 +19,15 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
-.hero-header {
+.hero-title {
+    font-size: clamp(24px, 5vw, 40px) !important;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    line-height: 1.3 !important;
     text-align: center;
-    padding: 16px 5%; 
-    border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
-    margin-bottom: 1.5rem;
     width: 100%;
 }
+
 .hero-title {
     font-family: 'Montserrat', sans-serif;
     font-size: 32px !important;
