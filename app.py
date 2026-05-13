@@ -17,10 +17,8 @@ st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered
 # ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
 <style>
-/* กูเปลี่ยนมาใช้ Montserrat กับ Inter ให้เหมือนในรูปมึง */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
-/* พื้นหลังอวกาศมืดสนิทและจับให้อยู่ตรงกลาง */
 .stApp { 
     display: flex !important;
     flex-direction: column !important; 
@@ -162,7 +160,7 @@ except Exception as e:
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:\'Montserrat\', sans-serif; font-size:1rem; margin-top:10px; font-weight:600;">SELECTION_MODE</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-family:\'Montserrat\', sans-serif; font-size:1rem; margin-top:0px; font-weight:600;">SELECTION_MODE</p>', unsafe_allow_html=True)
 mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
 
 img = None
