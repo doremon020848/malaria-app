@@ -63,7 +63,7 @@ div.stButton {
     display: flex !important;
     justify-content: center !important;
     width: 100% !important;
-    margin-top: 1.5rem !important;
+    margin-top: 1rem !important;
 }
 
 div.stButton > button {
