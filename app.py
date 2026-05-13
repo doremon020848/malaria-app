@@ -62,9 +62,9 @@ st.markdown("""
     font-family: 'Inter', sans-serif !important;
     color: #67A8E6 !important;
     letter-spacing: 1px !important;
-    margin-top: 5px !important;
+    margin-top: 0px !important;
     font-weight: 400 !important;
-    font-size: 12px !important; 
+    font-size: 16px !important; 
     text-align: center !important;
 }
 
