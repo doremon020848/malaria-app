@@ -73,21 +73,14 @@ div.stButton > button:hover {
     transform: scale(1.02);
 }
 
-/* ผลลัพธ์ (Result) */
 .result-display {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05) !important; /* เพิ่มความเข้มอีกนิด */
     padding: 20px;
-    text-align: center !important; /* บังคับกลางตรงนี้ */
+    text-align: center !important; 
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
+    border-radius: 12px; /* เพิ่มความโค้งให้เข้ากับปุ่ม */
     width: 100%;
-}
-
-/* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
-.result-display * {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
 }
 
 /* ช่อง Preview รูป */
@@ -178,9 +171,12 @@ if img:
             status = "NORMAL CELL" if is_safe else "INFECTED DETECTED"
             
             st.markdown(f"""
-                <div style="text-align: left; background: #0e1117; padding: 20px; border-radius: 10px;">
+                <div class="result-display">
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">SCAN RESULT</p>
                     <h2 style="font-family:'Inter', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; font-weight:700;">{status}</h2>
+                    
+                    <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 80%;"></div>
+                    
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">CONFIDENCE LEVEL</p>
                     <h1 style="font-family:'Inter', sans-serif; font-size:1.8rem; margin:0; color:#ffffff; font-weight:700;">{conf*100:.2f}%</h1>
                 </div>
