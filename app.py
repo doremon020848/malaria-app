@@ -160,7 +160,7 @@ except Exception as e:
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; margin-top:0px; font-weight:600;">SELECTION_MODE</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; margin-top:0px; font-weight:600;">SELECTION MODE</p>', unsafe_allow_html=True)
 mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
 
 img = None
@@ -199,13 +199,13 @@ if img:
         conf = pred if is_safe else 1 - pred
         color = "#00d2b4" if is_safe else "#ff3d6b"
         status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
-        
+        # Montserrat
         st.markdown(f"""
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%; font-weight:500;">SCAN RESULT</p>
-            <h2 style="font-family:'Montserrat', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%; font-weight:700;">{status}</h2>
-            <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
+            <h2 style="font-family:'Inter', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%; font-weight:700;">{status}</h2>
+            <div style="margin: 10px auto; height: 1px;Inter background: rgba(77,163,255,0.2); width: 100%;"></div>
             <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%; font-weight:500;">CONFIDENCE LEVEL</p>
-            <h1 style="font-family:'Montserrat', sans-serif; font-size:1.8rem; margin:0; color:#ffffff; width:100%; font-weight:700;">{conf*100:.2f}%</h1>
+            <h1 style="font-family:'Inter', sans-serif; font-size:1.8rem; margin:0; color:#ffffff; width:100%; font-weight:700;">{conf*100:.2f}%</h1>
         </div>
         """, unsafe_allow_html=True)
