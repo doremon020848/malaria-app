@@ -12,16 +12,13 @@ IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
 # --- PAGE CONFIG ---
-# st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
+st.set_page_config(page_title="Malaria Detection", layout="centered")
 
-# ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
+# ─── UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
 
-#MainMenu, footer, header { visibility: hidden; }
-
-/* หัวข้อใหญ่แนวตั้ง */
 .hero-header {
     text-align: center;
     padding: 16px 5%; 
