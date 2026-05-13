@@ -30,7 +30,7 @@ st.markdown("""
     width: 100%;
 }
 .hero-title {
-    font-family: 'Montserrat', sans-serif; #
+    font-family: '', sans-serif; #Montserrat
     font-size: 32px !important;
     font-weight: 700;
     letter-spacing: 1px;
@@ -43,7 +43,7 @@ st.markdown("""
     margin: 0 auto;
 }
 
-/* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
+/* --- แก้ไขปุ่ม Action --- */
 div.stButton {
     display: flex !important;
     justify-content: center !important;
