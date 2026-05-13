@@ -30,17 +30,17 @@ st.markdown("""
     padding-right: 1rem !important;
 }
 
-.hero-header {
+.hero-header a {
     text-align: center;
     padding: 16px 0; 
     border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
     margin-bottom: 1.5rem;
     width: 100%;
+    display: none !important;
 }
 
 .hero-title {
     font-family: 'Montserrat', sans-serif;
-    /* ให้ clamp() คำนวณอัตโนมัติ ไม่ต้องไปฟิกซ์ขนาดใน @media แล้ว */
     font-size: clamp(22px, 6vw, 36px) !important; 
     font-weight: 700;
     letter-spacing: 1px;
@@ -51,9 +51,9 @@ st.markdown("""
     display: block; 
     line-height: 1.3 !important;
     margin: 0 auto;
-    /* ตัดคำไม่ให้ทะลักจอ */
     word-wrap: break-word;
     overflow-wrap: break-word;
+    pointer-events: none;
 }
 
 /* --- แก้ไขปุ่ม Action --- */
