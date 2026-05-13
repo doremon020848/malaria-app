@@ -27,14 +27,23 @@ st.markdown("""
     width: 100%;
 }
 .hero-title {
-    /* เล็กสุดไม่ต่ำกว่า 24px, ปกติ 5% ของจอ, ใหญ่สุดไม่เกิน 40px */
-    font-size: clamp(24px, 5vw, 40px) !important;
     font-family: 'Montserrat', sans-serif;
+    /* ใช้ clamp แทน px ธรรมดา */
+    font-size: clamp(24px, 5vw, 36px) !important; 
     font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #ffffff, #4da3ff);
+    text-transform: uppercase;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block; 
     line-height: 1.3 !important;
-    text-align: center;
-    width: 100%;
-}
+    margin: 0 auto;
+    
+    /* แถมให้: ช่วยให้คำมันตัดพอดีขอบ ไม่ทะลัก */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+# }
 # .hero-title {
 #     font-family: 'Montserrat', sans-serif;
 #     font-size: 32px !important;
