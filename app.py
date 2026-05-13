@@ -12,7 +12,7 @@ IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
+# st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
 
 # ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
