@@ -200,7 +200,7 @@ if img:
         color = "#00d2b4" if is_safe else "#ff3d6b"
         status = "NORMAL CELL" if is_safe else "INFECTED DETECTED"
         # Montserrat
-    st.markdown(f"""
+        st.markdown(f"""
         <div class="result-display" style="
             display: flex; 
             flex-direction: column; 
