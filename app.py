@@ -77,15 +77,17 @@ div.stButton > button:hover {
 .result-display {
     background: rgba(255, 255, 255, 0.03);
     padding: 20px;
+    text-align: center !important; /* บังคับกลางตรงนี้ */
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
     width: 100%;
-    /* ใช้ Flexbox คุมไปเลย จบแน่นอน */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+}
+
+/* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
+.result-display * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 /* ช่อง Preview รูป */
