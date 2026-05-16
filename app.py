@@ -11,6 +11,9 @@ MODEL_PATH = "best_model_lite (1).h5"
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
+# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าต่ำกว่า 80% ให้ถือว่า "ไม่ใช่" ภาพที่เข้าข่าย)
+CONFIDENCE_THRESHOLD = 0.80 
+
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Malaria Detection", layout="centered")
 
@@ -169,7 +172,7 @@ else:
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
 if img:
-    st.markdown('',unsafe_allow_html=True)
+    st.markdown('', unsafe_allow_html=True)
     st.image(img, use_container_width=True)
     
     if st.button("START ANALYTICS"):
@@ -180,24 +183,27 @@ if img:
         img_arr = preprocess_input(img_arr)
         
         with st.spinner("PROCESSING..."):
-            # ทำนายผลแบบ Multi-class (พ่นออกมาเป็น Array ของโอกาสเกิดแต่ละ Class)
-            predictions = model.predict(img_arr)[0]
-            class_idx = np.argmax(predictions)  # หาดัชนีของคลาสที่มีค่าสูงสุด
             
-            # สมมติฐานหลักการเรียง Class Index: 0 = Infected, 1 = Normal, 2 = Others
-            # (แก้สลับเลขตามโครงสร้างจริงที่มึงเทรนมาได้เลยสัส)
-            if class_idx == 2:
-                status = "OTHERS"
-                conf = 0.00  # มั่นใจ 0 เปอร์เซ็นต์ตามที่มึงสั่ง
-                color = "#ffaa00"  # สีส้มสไตล์แจ้งเตือนแบบงงๆ
-            elif class_idx == 1:
-                status = "NORMAL CELL"
-                conf = float(predictions[1])
-                color = "#00d2b4"  # สีเขียวเซฟๆ
+            # โมเดลเดิมพ่นค่าออกมาระหว่าง 0.0 ถึง 1.0 (Binary Classification)
+            pred = float(model.predict(img_arr)[0][0])
+            
+            is_safe = pred > 0.5
+            raw_conf = pred if is_safe else 1 - pred
+            
+            # --- ดักจับภาพที่ไม่เข้าข่าย ---
+            # ถ้าความมั่นใจต่ำกว่าเกณฑ์ที่ตั้งไว้ (โมเดลเดาทางไม่ถูก) ให้พ่นว่า "ไม่ใช่"
+            if raw_conf < CONFIDENCE_THRESHOLD:
+                status = "ไม่ใช่ภาพที่เข้าข่ายการวิเคราะห์"
+                conf = 0.00  # บังคับเป็น 0.00% ตามที่ต้องการ
+                color = "#ff9f43"  # ใช้สีส้มสไตล์ Warning
             else:
-                status = "INFECTED DETECTED"
-                conf = float(predictions[0])
-                color = "#ff3d6b"  # สีแดงฉาน
+                conf = raw_conf
+                if is_safe:
+                    status = "NORMAL CELL"
+                    color = "#00d2b4"  # สีเขียว
+                else:
+                    status = "INFECTED DETECTED"
+                    color = "#ff3d6b"  # สีแดง
             
             st.markdown(f"""
                 <div class="result-display">
