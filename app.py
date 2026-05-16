@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model (6).h5"
+MODEL_PATH = "best_model (6).keras"
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
