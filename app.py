@@ -182,7 +182,7 @@ if img:
         img_arr = np.expand_dims(img_arr, axis=0)
         img_arr = preprocess_input(img_arr)
         
-       with st.spinner("PROCESSING..."):
+with st.spinner("PROCESSING..."):
             
             # --- 1. ทำนายผลแบบใหม่ (3 คลาส) ---
             predictions = model.predict(img_arr)
@@ -225,4 +225,4 @@ if img:
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">CONFIDENCE LEVEL</p>
                     <h1 style="font-family:'Inter', sans-serif; font-size:1.8rem; margin:0; color:#ffffff; font-weight:700;">{conf*100:.2f}%</h1>
                 </div>
-            """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)low_html=True)
