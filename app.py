@@ -7,12 +7,9 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model (6).keras"  # ชี้ไปที่ไฟล์โมเดล 3 คลาสของมึง
+MODEL_PATH = "best_model (6).keras"  # ชื่อไฟล์โมเดลของมึง
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
-
-# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าคะแนนคลาสที่ชนะไม่ถึง 60% ให้ตบเข้า others ทันที)
-CONFIDENCE_THRESHOLD = 0.60 
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Malaria Detection", layout="centered")
@@ -38,9 +35,6 @@ st.markdown("""
     margin-bottom: 1.5rem;
     width: 100%;
 }
-.hero-header a {
-    display: none !important;
-}
 
 .hero-title {
     font-family: 'Montserrat', sans-serif;
@@ -54,8 +48,6 @@ st.markdown("""
     display: block; 
     line-height: 1.3 !important;
     margin: 0 auto;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
     pointer-events: none;
 }
 
@@ -89,13 +81,6 @@ div.stButton > button {
     font-weight: 700 !important;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: 0.3s ease-in-out !important;
-}
-
-div.stButton > button:hover {
-    background: #ffffff !important;
-    box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
-    transform: scale(1.02);
 }
 
 .result-display {
@@ -107,23 +92,6 @@ div.stButton > button:hover {
     border-radius: 10px; 
     width: 100%;
 }
-
-@media (max-width: 768px) {
-    .hero-title {
-        letter-spacing: 0px !important;
-    }
-    .hero-header {
-        padding: 5px 0; 
-    }
-    .result-display {
-        padding: 15px; 
-        margin-top: 20px;
-    }
-    div.stButton > button {
-        height: 3.2rem !important;
-        font-size: 1rem !important;
-    }
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -131,7 +99,7 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for<br>Malaria detection<br>using mobilenetv2</h1>
-    <p class="hero-subtitle">with 3-Class Robust Prediction</p>
+    <p class="hero-subtitle">3-Class Fixed Robust Prediction</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -143,8 +111,14 @@ def load_my_model():
 try:
     model = load_my_model()
 except Exception as e:
-    st.error(f"🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
+    st.error(f"🚀 SYSTEM ERROR: MODEL_NOT_FOUND ({e})")
     st.stop()
+
+# ─── SIDEBAR / CONTROLS (เพิ่มมาให้มึงปรับจูนและตรวจบั๊กง่ายขึ้น) ───
+st.sidebar.header("🛠️ ตู้วิเคราะห์โมเดล")
+# ให้มึงเลื่อนปรับ Threshold ได้เองบนเว็บ ถ้าตั้ง 0.00 คือปิดระบบดัก
+CONFIDENCE_THRESHOLD = st.sidebar.slider("Confidence Threshold (เกณฑ์ดักภาพมั่ว)", 0.0, 1.0, 0.50, step=0.05)
+show_debug = st.sidebar.checkbox("เปิด Debug Mode ดูค่าหลังบ้าน", value=True)
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
 st.markdown('<p style="font-family:\'Inter\', sans-serif; font-size:1.2rem; margin-top:0px; font-weight:600;">SELECTION MODE</p>', unsafe_allow_html=True)
@@ -168,7 +142,6 @@ else:
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
 if img:
-    st.markdown('', unsafe_allow_html=True)
     st.image(img, use_container_width=True)
     
     if st.button("START ANALYTICS"):
@@ -180,35 +153,46 @@ if img:
         
         with st.spinner("PROCESSING..."):
             
-            # 1. ทำนายผลแบบ Multi-class (พ่นค่าความมั่นใจออกมา 3 คลาส)
-            predictions = model.predict(img_arr)
+            # 1. รันทำนายค่าจากโมเดล
+            raw_predictions = model.predict(img_arr)
             
-            # ลำดับคลาสเรียงตามตัวอักษรของชื่อโฟลเดอร์ตอนเทรน (เช็กให้ตรงล่ะ)
+            # 🔥 บังคับแปลงค่าเอาต์พุตให้เป็น Softmax เผื่อเลเยอร์สุดท้ายของมึงไม่มี
+            # สิ่งนี้จะทำให้ค่าความมั่นใจทั้ง 3 คลาสรวมกันได้ 1.0 (100%) เสมอ
+            predictions = tf.nn.softmax(raw_predictions).numpy()
+            
+            # ลำดับคลาส (ถ้ามึงสลับโฟลเดอร์ตอนเทรน มาเปลี่ยนลำดับตรงนี้ได้)
             class_names = ['malaria', 'normal', 'others'] 
             
             max_confidence = float(np.max(predictions[0]))
             predicted_class_index = np.argmax(predictions[0])
+            final_class = class_names[predicted_class_index]
             
-            # 2. ตรวจสอบเงื่อนไข Threshold ดักภาพเอ๋อ/ภาพไม่ใช่เม็ดเลือด
+            # 2. แสดงผล Debug Mode ฝั่งซ้ายมือ (เอาไว้ส่องดูเวลาโมเดลเอ๋อ)
+            if show_debug:
+                st.sidebar.subheader("📊 ค่าสถิติหลังบ้าน")
+                st.sidebar.write(f"ค่าดิบจากโมเดล (Raw): {raw_predictions[0]}")
+                st.sidebar.write(f"ค่าหลังแปลง Softmax: {predictions[0]}")
+                st.sidebar.write(f"โมเดลเลือกคลาส: {final_class} (ดัชนี: {predicted_class_index})")
+                st.sidebar.write(f"ความมั่นใจสูงสุด: {max_confidence*100:.2f}%")
+            
+            # 3. เช็กเงื่อนไขแสดงผลตามเกณฑ์ Threshold
             if max_confidence < CONFIDENCE_THRESHOLD:
                 status = "NOT BLOOD CELL (LOW CONFIDENCE)"
                 conf = max_confidence
                 color = "#ff9f43"  # สีส้ม Warning
             else:
-                final_class = class_names[predicted_class_index]
                 conf = max_confidence
-                
                 if final_class == 'normal':
                     status = "NORMAL CELL"
                     color = "#00d2b4"  # สีเขียว
                 elif final_class == 'malaria':
                     status = "INFECTED DETECTED"
                     color = "#ff3d6b"  # สีแดง
-                elif final_class == 'others':
+                else:  # คลาส others
                     status = "NOT BLOOD CELL (OTHERS)"
                     color = "#ff9f43"  # สีส้ม Warning
             
-            # 3. พ่นหน้าต่าง UI แสดงผลลัพธ์ (แก้บั๊กวงเล็บเกเรให้แล้ว)
+            # 4. พ่น UI แสดงผลลัพธ์
             st.markdown(f"""
                 <div class="result-display">
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">SCAN RESULT</p>
