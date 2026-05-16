@@ -7,11 +7,11 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model_lite.h5"
+MODEL_PATH = "best_model_lite (6).keras"  # ชี้ไปที่ไฟล์โมเดล 3 คลาสของมึง
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
-# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าต่ำกว่า 60% ให้ถือว่า "ไม่ใช่" ภาพที่เข้าข่าย)
+# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าคะแนนคลาสที่ชนะไม่ถึง 60% ให้ตบเข้า others ทันที)
 CONFIDENCE_THRESHOLD = 0.60 
 
 # --- PAGE CONFIG ---
@@ -69,7 +69,6 @@ st.markdown("""
     text-align: center !important;
 }
 
-/* --- แก้ไขปุ่ม Action --- */
 div.stButton {
     display: flex !important;
     justify-content: center !important;
@@ -109,9 +108,6 @@ div.stButton > button:hover {
     width: 100%;
 }
 
-/* =======================================================
-                    MOBILE RESPONSIVE
-   ======================================================= */
 @media (max-width: 768px) {
     .hero-title {
         letter-spacing: 0px !important;
@@ -135,7 +131,7 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for<br>Malaria detection<br>using mobilenetv2</h1>
-    <p class="hero-subtitle">with 98.5% Precision</p>
+    <p class="hero-subtitle">with 3-Class Robust Prediction</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -176,33 +172,29 @@ if img:
     st.image(img, use_container_width=True)
     
     if st.button("START ANALYTICS"):
-        # Preprocess
+        # Preprocess ภาพ
         img_p = img.resize(IMG_SIZE)
         img_arr = image.img_to_array(img_p)
         img_arr = np.expand_dims(img_arr, axis=0)
         img_arr = preprocess_input(img_arr)
         
-with st.spinner("PROCESSING..."):
+        with st.spinner("PROCESSING..."):
             
-            # --- 1. ทำนายผลแบบใหม่ (3 คลาส) ---
+            # 1. ทำนายผลแบบ Multi-class (พ่นค่าความมั่นใจออกมา 3 คลาส)
             predictions = model.predict(img_arr)
             
-            # ⚠️ สำคัญมาก: มึงต้องเรียงชื่อคลาสให้ตรงกับตอนที่มึง Train โมเดลนะ 
-            # ถ้ามึงใช้ image_dataset_from_directory มันจะเรียงตามตัวอักษรโฟลเดอร์ (malaria, normal, others)
+            # ลำดับคลาสเรียงตามตัวอักษรของชื่อโฟลเดอร์ตอนเทรน (เช็กให้ตรงล่ะ)
             class_names = ['malaria', 'normal', 'others'] 
             
-            max_confidence = np.max(predictions[0])
+            max_confidence = float(np.max(predictions[0]))
             predicted_class_index = np.argmax(predictions[0])
             
-            # --- 2. ดักจับภาพด้วย Threshold ---
-            # ใช้ CONFIDENCE_THRESHOLD 0.60 จากที่มึงตั้งไว้ข้างบนไฟล์ (หรือจะแก้เป็น 0.80 ก็ไปแก้ข้างบน)
+            # 2. ตรวจสอบเงื่อนไข Threshold ดักภาพเอ๋อ/ภาพไม่ใช่เม็ดเลือด
             if max_confidence < CONFIDENCE_THRESHOLD:
-                # ถ้าความมั่นใจต่ำกว่าเกณฑ์ ให้เตะลง Others ทันที
                 status = "NOT BLOOD CELL (LOW CONFIDENCE)"
-                conf = max_confidence  # โชว์เปอเซ็นต์ที่มันเดาได้ไปเลย
+                conf = max_confidence
                 color = "#ff9f43"  # สีส้ม Warning
             else:
-                # ถ้ามั่นใจเกินเกณฑ์ ก็มาดูว่ามันคือคลาสไหน
                 final_class = class_names[predicted_class_index]
                 conf = max_confidence
                 
@@ -212,12 +204,11 @@ with st.spinner("PROCESSING..."):
                 elif final_class == 'malaria':
                     status = "INFECTED DETECTED"
                     color = "#ff3d6b"  # สีแดง
-                elif final_class == 'others': 
-                    # กรณีที่มันมั่นใจทะลุเกณฑ์ว่าเป็นภาพขยะ (Others)
+                elif final_class == 'others':
                     status = "NOT BLOOD CELL (OTHERS)"
-                    color = "#ff9f43"  # สีส้ม
+                    color = "#ff9f43"  # สีส้ม Warning
             
-            # --- 3. ส่วนแสดงผล UI ของมึงเหมือนเดิม ไม่ต้องแก้ ---
+            # 3. พ่นหน้าต่าง UI แสดงผลลัพธ์ (แก้บั๊กวงเล็บเกเรให้แล้ว)
             st.markdown(f"""
                 <div class="result-display">
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">SCAN RESULT</p>
