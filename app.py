@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model (6).keras"  # ชี้ไปที่ไฟล์โมเดล 3 คลาสของมึง
+MODEL_PATH = "best_model_lite (1).h5"  # ชี้ไปที่ไฟล์โมเดล 3 คลาสของมึง
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
