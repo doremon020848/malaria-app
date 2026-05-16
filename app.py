@@ -11,8 +11,8 @@ MODEL_PATH = "best_model_lite (1).h5"
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
-# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าต่ำกว่า 80% ให้ถือว่า "ไม่ใช่" ภาพที่เข้าข่าย)
-CONFIDENCE_THRESHOLD = 0.80 
+# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าต่ำกว่า 60% ให้ถือว่า "ไม่ใช่" ภาพที่เข้าข่าย)
+CONFIDENCE_THRESHOLD = 0.60 
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Malaria Detection", layout="centered")
@@ -184,18 +184,17 @@ if img:
         
         with st.spinner("PROCESSING..."):
             
-            # โมเดลเดิมพ่นค่าออกมาระหว่าง 0.0 ถึง 1.0 (Binary Classification)
+            # ทำนายผลแบบเดิม (Binary) ค่าอยู่ระหว่าง 0.0 ถึง 1.0
             pred = float(model.predict(img_arr)[0][0])
             
             is_safe = pred > 0.5
             raw_conf = pred if is_safe else 1 - pred
             
-            # --- ดักจับภาพที่ไม่เข้าข่าย ---
-            # ถ้าความมั่นใจต่ำกว่าเกณฑ์ที่ตั้งไว้ (โมเดลเดาทางไม่ถูก) ให้พ่นว่า "ไม่ใช่"
+            # --- ดักจับภาพตามเกณฑ์ 60% ---
             if raw_conf < CONFIDENCE_THRESHOLD:
                 status = "ไม่ใช่ภาพที่เข้าข่ายการวิเคราะห์"
-                conf = 0.00  # บังคับเป็น 0.00% ตามที่ต้องการ
-                color = "#ff9f43"  # ใช้สีส้มสไตล์ Warning
+                conf = 0.00  # บังคับเป็น 0.00%
+                color = "#ff9f43"  # สีส้ม Warning
             else:
                 conf = raw_conf
                 if is_safe:
