@@ -1,18 +1,16 @@
 import os
 import streamlit as st
 import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model_lite (1).h5"
+MODEL_PATH = "best_model_lite.h5"
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
-# เกณฑ์ความมั่นใจขั้นต่ำ (ถ้าต่ำกว่า 60% ให้ถือว่า "ไม่ใช่" ภาพที่เข้าข่าย)
-CONFIDENCE_THRESHOLD = 0.60 
+# รายชื่อคลาส ต้องเรียงให้ตรงกับตอนเทรนใน Colab เป๊ะๆ (0: Others, 1: normal, 2: malaria)
+CLASS_NAMES = ["Others", "normal", "malaria"]
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Malaria Detection", layout="centered")
@@ -135,19 +133,20 @@ div.stButton > button:hover {
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for<br>Malaria detection<br>using mobilenetv2</h1>
-    <p class="hero-subtitle">with 98.5% Precision</p>
+    <p class="hero-subtitle">with 3-Class Optimization</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ─── MODEL LOADING ─────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_my_model():
+    # โหลดไฟล์โมเดลที่มึงเซฟแบบ include_optimizer=False มาจาก Colab
     return tf.keras.models.load_model(MODEL_PATH, compile=False)
 
 try:
     model = load_my_model()
 except Exception as e:
-    st.error(f"🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
+    st.error(f"🚀 SYSTEM ERROR: MODEL_NOT_FOUND ({MODEL_PATH})")
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
@@ -165,9 +164,11 @@ if mode == "SAMPLES":
                 img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
         else:
             st.warning("No samples found in directory.")
+    else:
+        st.warning(f"Directory '{SAMPLE_DIR}' not found.")
 else:
     st.markdown('<p style="font-family:\'Inter\', sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">UPLOAD CELL DATA</p>', unsafe_allow_html=True)
-    up = st.file_uploader("", type=["jpg", "png"], label_visibility='collapsed')
+    up = st.file_uploader("", type=["jpg", "png", "jpeg"], label_visibility='collapsed')
     if up: img = Image.open(up).convert("RGB")
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
@@ -176,34 +177,43 @@ if img:
     st.image(img, use_container_width=True)
     
     if st.button("START ANALYTICS"):
-        # Preprocess
+        # Preprocess ภาพแปลงเป็น Array และ Resize ให้ได้ขนาด 224x224
         img_p = img.resize(IMG_SIZE)
-        img_arr = image.img_to_array(img_p)
+        img_arr = np.array(img_p, dtype=np.float32)
         img_arr = np.expand_dims(img_arr, axis=0)
-        img_arr = preprocess_input(img_arr)
+        
+        # ⚠️ ดึงสูตร Scaling ตัวเดียวกับตอนเทรนมาใช้ (หาร 127.5 ลบ 1) ⚠️
+        img_arr = (img_arr / 127.5) - 1.0
         
         with st.spinner("PROCESSING..."):
+            # ทำนายผลแบบ 3 คลาส จะได้ Array ความน่าจะเป็นกลับมา เช่น [0.02, 0.95, 0.03]
+            predictions = model.predict(img_arr)[0]
+            class_idx = np.argmax(predictions)   # หาคลาสที่มีค่าสูงสุด
+            raw_conf = float(predictions[class_idx])  # ดึงค่าเปอร์เซ็นต์ความมั่นใจดั้งเดิม
             
-            # ทำนายผลแบบเดิม (Binary) ค่าอยู่ระหว่าง 0.0 ถึง 1.0
-            pred = float(model.predict(img_arr)[0][0])
-            
-            is_safe = pred > 0.5
-            raw_conf = pred if is_safe else 1 - pred
-            
-            # --- ดักจับภาพตามเกณฑ์ 60% ---
-            if raw_conf < CONFIDENCE_THRESHOLD:
+            # --- ตรรกะแยกผลลัพธ์และระบบ Double-Lock โดยไอ้ยี่สิบ ---
+            if class_idx == 0:  # ทายตกคลาส "Others"
                 status = "ไม่ใช่ภาพที่เข้าข่ายการวิเคราะห์"
-                conf = 0.00  # บังคับเป็น 0.00%
-                color = "#ff9f43"  # สีส้ม Warning
-            else:
+                conf = 0.00     # บังคับพ่นเป็น 0% ทันทีตามสั่ง
+                color = "#ff9f43" # สีส้มแจ้งเตือน
+                
+            elif class_idx == 1:  # ทายตกคลาส "normal"
+                status = "NORMAL CELL"
                 conf = raw_conf
-                if is_safe:
-                    status = "NORMAL CELL"
-                    color = "#00d2b4"  # สีเขียว
-                else:
-                    status = "INFECTED DETECTED"
-                    color = "#ff3d6b"  # สีแดง
+                color = "#00d2b4" # สีเขียวเซฟๆ
+                
+            else:  # class_idx == 2 แปลว่าทายตกคลาส "malaria"
+                status = "INFECTED DETECTED"
+                conf = raw_conf
+                color = "#ff3d6b" # สีแดงฉาน
             
+            # 🛡️ ล็อคชั้นที่ 2: ถ้าทายว่าเป็นเซลล์เลือด (คลาส 1 หรือ 2) แต่เสือกมั่นใจต่ำกว่า 60%
+            if class_idx != 0 and conf < 0.60:
+                status = "ไม่ใช่ภาพที่เข้าข่ายการวิเคราะห์"
+                conf = 0.00     # ตบให้เป็น 0% ทันทีป้องกันหน้าแตก
+                color = "#ff9f43"
+            
+            # แสดงผลลัพธ์บนหน้าเว็บแบบหล่อๆ
             st.markdown(f"""
                 <div class="result-display">
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">SCAN RESULT</p>
