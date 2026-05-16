@@ -21,8 +21,6 @@ st.markdown("""
 
 #MainMenu, footer, header { visibility: hidden; }
 
-
-
 .block-container {
     padding-top: 2rem !important;
     padding-bottom: 2rem !important;
@@ -108,9 +106,8 @@ div.stButton > button:hover {
     width: 100%;
 }
 
-
 /* =======================================================
-                       MOBILE RESPONSIVE
+                    MOBILE RESPONSIVE
    ======================================================= */
 @media (max-width: 768px) {
     .hero-title {
@@ -151,7 +148,7 @@ except Exception as e:
     st.stop()
 
 # ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; margin-top:0px; font-weight:600;">SELECTION MODE</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-family:\'Inter\', sans-serif; font-size:1.2rem; margin-top:0px; font-weight:600;">SELECTION MODE</p>', unsafe_allow_html=True)
 mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
 
 img = None
@@ -159,14 +156,14 @@ if mode == "SAMPLES":
     if os.path.exists(SAMPLE_DIR):
         files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         if files:
-            st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">CHOOSE DATASET</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-family:\'Inter\', sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">CHOOSE DATASET</p>', unsafe_allow_html=True)
             choice = st.selectbox("", files, label_visibility="collapsed")
             if choice:
                 img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
         else:
             st.warning("No samples found in directory.")
 else:
-    st.markdown('<p style="font-family:"Inter", sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">UPLOAD CELL DATA</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-family:\'Inter\', sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:-10px;">UPLOAD CELL DATA</p>', unsafe_allow_html=True)
     up = st.file_uploader("", type=["jpg", "png"], label_visibility='collapsed')
     if up: img = Image.open(up).convert("RGB")
 
@@ -183,13 +180,24 @@ if img:
         img_arr = preprocess_input(img_arr)
         
         with st.spinner("PROCESSING..."):
+            # ทำนายผลแบบ Multi-class (พ่นออกมาเป็น Array ของโอกาสเกิดแต่ละ Class)
+            predictions = model.predict(img_arr)[0]
+            class_idx = np.argmax(predictions)  # หาดัชนีของคลาสที่มีค่าสูงสุด
             
-            pred = float(model.predict(img_arr)[0][0])
-            
-            is_safe = pred > 0.5
-            conf = pred if is_safe else 1 - pred
-            color = "#00d2b4" if is_safe else "#ff3d6b"
-            status = "NORMAL CELL" if is_safe else "INFECTED DETECTED"
+            # สมมติฐานหลักการเรียง Class Index: 0 = Infected, 1 = Normal, 2 = Others
+            # (แก้สลับเลขตามโครงสร้างจริงที่มึงเทรนมาได้เลยสัส)
+            if class_idx == 2:
+                status = "OTHERS"
+                conf = 0.00  # มั่นใจ 0 เปอร์เซ็นต์ตามที่มึงสั่ง
+                color = "#ffaa00"  # สีส้มสไตล์แจ้งเตือนแบบงงๆ
+            elif class_idx == 1:
+                status = "NORMAL CELL"
+                conf = float(predictions[1])
+                color = "#00d2b4"  # สีเขียวเซฟๆ
+            else:
+                status = "INFECTED DETECTED"
+                conf = float(predictions[0])
+                color = "#ff3d6b"  # สีแดงฉาน
             
             st.markdown(f"""
                 <div class="result-display">
