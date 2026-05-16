@@ -182,28 +182,42 @@ if img:
         img_arr = np.expand_dims(img_arr, axis=0)
         img_arr = preprocess_input(img_arr)
         
-        with st.spinner("PROCESSING..."):
+       with st.spinner("PROCESSING..."):
             
-            # ทำนายผลแบบเดิม (Binary) ค่าอยู่ระหว่าง 0.0 ถึง 1.0
-            pred = float(model.predict(img_arr)[0][0])
+            # --- 1. ทำนายผลแบบใหม่ (3 คลาส) ---
+            predictions = model.predict(img_arr)
             
-            is_safe = pred > 0.5
-            raw_conf = pred if is_safe else 1 - pred
+            # ⚠️ สำคัญมาก: มึงต้องเรียงชื่อคลาสให้ตรงกับตอนที่มึง Train โมเดลนะ 
+            # ถ้ามึงใช้ image_dataset_from_directory มันจะเรียงตามตัวอักษรโฟลเดอร์ (malaria, normal, others)
+            class_names = ['malaria', 'normal', 'others'] 
             
-            # --- ดักจับภาพตามเกณฑ์ 60% ---
-            if raw_conf < CONFIDENCE_THRESHOLD:
-                status = "ไม่ใช่ภาพที่เข้าข่ายการวิเคราะห์"
-                conf = 0.00  # บังคับเป็น 0.00%
+            max_confidence = np.max(predictions[0])
+            predicted_class_index = np.argmax(predictions[0])
+            
+            # --- 2. ดักจับภาพด้วย Threshold ---
+            # ใช้ CONFIDENCE_THRESHOLD 0.60 จากที่มึงตั้งไว้ข้างบนไฟล์ (หรือจะแก้เป็น 0.80 ก็ไปแก้ข้างบน)
+            if max_confidence < CONFIDENCE_THRESHOLD:
+                # ถ้าความมั่นใจต่ำกว่าเกณฑ์ ให้เตะลง Others ทันที
+                status = "NOT BLOOD CELL (LOW CONFIDENCE)"
+                conf = max_confidence  # โชว์เปอเซ็นต์ที่มันเดาได้ไปเลย
                 color = "#ff9f43"  # สีส้ม Warning
             else:
-                conf = raw_conf
-                if is_safe:
+                # ถ้ามั่นใจเกินเกณฑ์ ก็มาดูว่ามันคือคลาสไหน
+                final_class = class_names[predicted_class_index]
+                conf = max_confidence
+                
+                if final_class == 'normal':
                     status = "NORMAL CELL"
                     color = "#00d2b4"  # สีเขียว
-                else:
+                elif final_class == 'malaria':
                     status = "INFECTED DETECTED"
                     color = "#ff3d6b"  # สีแดง
+                elif final_class == 'others': 
+                    # กรณีที่มันมั่นใจทะลุเกณฑ์ว่าเป็นภาพขยะ (Others)
+                    status = "NOT BLOOD CELL (OTHERS)"
+                    color = "#ff9f43"  # สีส้ม
             
+            # --- 3. ส่วนแสดงผล UI ของมึงเหมือนเดิม ไม่ต้องแก้ ---
             st.markdown(f"""
                 <div class="result-display">
                     <p style="font-family:'Inter', sans-serif; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; font-weight:500;">SCAN RESULT</p>
