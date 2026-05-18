@@ -12,9 +12,8 @@ from PIL import Image
 @st.cache_resource
 def load_malaria_model():
     model_path = 'best_model (6).keras'
-    fixed_model_path = 'fixed_streamlit_model.keras'
+    fixed_model_path = 'fixed_streamlit_model_v2.keras'
     
-    # แก้ไขบั๊กโครงสร้าง Keras เวอร์ชั่นไม่ตรงกันให้อัตโนมัติสัส
     if not os.path.exists(fixed_model_path):
         if os.path.exists(model_path):
             with zipfile.ZipFile(model_path, 'r') as yin:
@@ -41,26 +40,20 @@ def load_malaria_model():
         st.error(f"โหลดโมเดลไม่สำเร็จ: {e}")
         return None
 
-# สั่งให้คลาสโหลดโมเดลสแตนด์บายรอไว้เลย
 model = load_malaria_model()
 
 # ----------------------------------------------------
 # 2. ออกแบบหน้าต่างเว็บอินเตอร์เฟซ
 # ----------------------------------------------------
-st.set_page_config(page_title="Malaria & Dengue Detection", page_icon="🔬", layout="centered")
+st.set_page_config(page_title="Malaria Detection (ติดเชื้อ/ไม่ติดเชื้อ)", page_icon="🔬", layout="centered")
 
-st.title("🔬 ระบบวิเคราะห์ภาพถ่ายเชื้อมาลาเรียและไข้เลือดออก")
-st.write("ไอ้ยี่สิบ! มึงลองอัปโหลดรูปภาพผลเลือด หรือรูปเซลล์ เพื่อให้ AI ทำนายผลลัพธ์แยกคลาสได้เลย")
+st.title("🔬 ระบบวิเคราะห์ภาพถ่ายเชื้อมาลาเรีย")
+st.write("ไอ้ยี่สิบ! อัปโหลดรูปภาพผลเลือดจากกล้องจุลทรรศน์เพื่อเช็คว่า **ติดเชื้อ** หรือ **ไม่ติดเชื้อ**")
 
-# ตั้งชื่อคลาสแสดงผลให้สอดคล้องกับโมเดล 3 คลาสของมึง
-CLASS_NAMES = [
-    "เชื้อมาลาเรีย (Malaria)", 
-    "ไข้เลือดออก / เซลล์ปกติ (Dengue / Normal)", 
-    "ไม่เกี่ยวข้อง / ไม่ใช่รูปตรวจเชื้อ (Unrelated)"
-]
-
+# ----------------------------------------------------
 # ช่องอัปโหลดไฟล์รูปภาพบนหน้าเว็บ
-uploaded_file = st.file_uploader("โยนรูปภาพเข้ามารันตรงนี้สลัด...", type=["jpg", "jpeg", "png"])
+# ----------------------------------------------------
+uploaded_file = st.file_uploader("โยนรูปภาพเซลล์เม็ดเลือดเข้ามาตรงนี้เลยสัส...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     # เปิดรูปภาพขึ้นมาโชว์บนหน้าเว็บ
@@ -70,32 +63,41 @@ if uploaded_file is not None:
     if model is None:
         st.error("❌ ไม่พบไฟล์โมเดล 'best_model (6).keras' ในโฟลเดอร์เดียวกับโค้ดเว็บนี้เว้ย!")
     else:
-        with st.spinner('⏳ AI กำลังขยี้รูปภาพประมวลผลคำนวณกราฟแป๊บ...'):
-            # 1. ทำพรีโพรเซสเซสซิ่ง ปรับขนาดรูปเป็น 224x224 ตามที่โมเดลระบุไว้
+        with st.spinner('⏳ AI กำลังส่องกล้องวิเคราะห์รูปภาพแป๊บ...'):
+            # 1. ปรับขนาดรูปภาพให้เข้ากับโมเดล (224x224)
             img_resized = image_display.convert("RGB").resize((224, 224))
             img_array = np.array(img_resized)
-            img_array = np.expand_dims(img_array, axis=0) # ขยายมิติเป็น (1, 224, 224, 3)
+            img_array = np.expand_dims(img_array, axis=0)
             
-            # 2. สั่งโมเดลทำนายผลลัพธ์ดึงเอาค่ามาใช้งาน
+            # 2. สั่งโมเดลทำนายผลลัพธ์
             predictions = model.predict(img_array)[0]
             predicted_class_idx = np.argmax(predictions)
             confidence = predictions[predicted_class_idx]
             
             st.write("---")
-            st.subheader("📊 ผลการวิเคราะห์จากโมเดล")
+            st.subheader("📊 ผลการวิเคราะห์จากระบบ")
             
-            # 3. ตั้งเงื่อนไขแยกหมวดหมู่ตามที่มึงสั่งมา
-            # ถ้าโมเดลชี้ไปที่คลาส 2 หรือค่าความน่าจะเป็นต่ำกว่า 50% ให้ตีเป็นรูปคนอื่น/ไม่เกี่ยวข้องทันที
-            if predicted_class_idx == 2 or confidence < 0.5:
-                st.warning("⚠️ ผลลัพธ์: ไม่เกี่ยวข้อง / ไม่ใช่รูปภาพผลตรวจเชื้อมาลาเรียหรือไข้เลือดออก")
-                st.info(f"💡 ระบบคัดออกไปหมวดรูปภาพอื่น (ความมั่นใจสูงสุดเพียง: {confidence*100:.2f}%)")
+            # 3. เช็คเงื่อนไขคัดกรองรูปภาพ "ไม่เกี่ยวข้อง" ออกไปก่อนตามที่มึงสั่งไว้
+            # ถ้าโมเดลชี้ไปคลาส 2 หรือโมเดลทายไม่ขาด (ค่าความมั่นใจต่ำกว่า 60%) ดันออกไปหมวดไม่เกี่ยวข้องทันที
+            if predicted_class_idx == 2 or confidence < 0.60:
+                st.warning("⚠️ ผลการตรวจสอบ: ไม่เกี่ยวข้อง / ไม่ใช่รูปภาพเซลล์เม็ดเลือดที่ใช้ตรวจเชื้อ")
+                st.info(f"💡 ระบบคัดออก: โมเดลมองว่าเป็นรูปภาพอื่นที่ไม่เกี่ยวข้อง (ความมั่นใจ {confidence*100:.2f}%)")
+            
             else:
-                # ถ้าทายถูกกลุ่มคลาสมาลาเรีย หรือไข้เลือดออกแดงปกติ
-                st.success(f"🎯 ผลการตรวจวิเคราะห์: **{CLASS_NAMES[predicted_class_idx]}**")
-                st.metric(label="ค่าความมั่นใจสูงสุด (Confidence)", value=f"{confidence*100:.2f}%")
-                
-            # 4. ดึงฟังก์ชันพลอตกราฟแท่งแสดงข้อมูล Output มาโชว์ด้านล่างแยกกัน
+                # ถ้ามั่นใจว่าเป็นรูปเม็ดเลือดชัวร์ๆ ค่อยแยกคำตอบเป็น ติดเชื้อ กับ ไม่ติดเชื้อ
+                if predicted_class_idx == 0:
+                    st.error(f"🚨 ผลการตรวจวิเคราะห์: **ติดเชื้อมาลาเรีย (Infected / Parasitized)**")
+                    st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{confidence*100:.2f}%")
+                elif predicted_class_idx == 1:
+                    st.success(f"✅ ผลการตรวจวิเคราะห์: **ไม่ติดเชื้อ (Uninfected / Normal)**")
+                    st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{confidence*100:.2f}%")
+
+            # 4. พลอตกราฟแท่งโชว์เปรียบเทียบค่าน้ำหนักความน่าจะเป็นย้อนหลัง
             st.write("---")
-            st.subheader("📈 กราฟแสดงสถิติค่าน้ำหนักความน่าจะเป็นย้อนหลัง")
-            chart_data = {CLASS_NAMES[i]: float(predictions[i]) for i in range(len(CLASS_NAMES))}
-            st.bar_chart(chart_data) # พลอตกราฟแท่งสวยๆ ของ Streamlit ให้เลยข้ามฟังก์ชันสบายๆ
+            st.subheader("📈 กราฟแสดงสถิติค่าน้ำหนักความน่าจะเป็น")
+            chart_labels = {
+                "ติดเชื้อ (Class 0)": float(predictions[0]),
+                "ไม่ติดเชื้อ (Class 1)": float(predictions[1]),
+                "รูปอื่น/ไม่เกี่ยวข้อง (Class 2)": float(predictions[2])
+            }
+            st.bar_chart(chart_labels)
