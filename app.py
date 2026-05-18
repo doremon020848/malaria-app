@@ -4,15 +4,31 @@ import numpy as np
 import os
 import zipfile
 import json
+import requests
 from PIL import Image
+from io import BytesIO
 
 # ----------------------------------------------------
-# 1. ฟังก์ชันโหลดและซ่อมแซมโมเดล Keras แช่ไว้ในหน่วยความจำ
+# 1. ตั้งค่าลิงก์ GitHub Repository ของมึง (แก้ไขตรงนี้เลยสัส)
+# ----------------------------------------------------
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/samples/"
+
+# ใส่ชื่อไฟล์รูปภาพที่มีอยู่ในโฟลเดอร์ samples บน GitHub ของมึง
+SAMPLE_IMAGES = [
+    "เลือกรูปภาพตัวอย่าง...",
+    "cell_infected_1.png",
+    "cell_infected_2.png",
+    "cell_uninfected_1.png",
+    "cell_uninfected_2.png"
+]
+
+# ----------------------------------------------------
+# 2. ฟังก์ชันโหลดและซ่อมแซมโมเดล Keras
 # ----------------------------------------------------
 @st.cache_resource
 def load_malaria_model():
     model_path = 'best_model (6).keras'
-    fixed_model_path = 'fixed_streamlit_model_v2.keras'
+    fixed_model_path = 'fixed_streamlit_model_v4.keras'
     
     if not os.path.exists(fixed_model_path):
         if os.path.exists(model_path):
@@ -33,7 +49,6 @@ def load_malaria_model():
                         yout.writestr(item, data)
         else:
             return None
-            
     try:
         return tf.keras.models.load_model(fixed_model_path)
     except Exception as e:
@@ -43,61 +58,74 @@ def load_malaria_model():
 model = load_malaria_model()
 
 # ----------------------------------------------------
-# 2. ออกแบบหน้าต่างเว็บอินเตอร์เฟซ
+# 3. ออกแบบหน้าต่างเว็บอินเตอร์เฟซ
 # ----------------------------------------------------
-st.set_page_config(page_title="Malaria Detection (ติดเชื้อ/ไม่ติดเชื้อ)", page_icon="🔬", layout="centered")
+st.set_page_config(page_title="Malaria Detection (2 Classes)", page_icon="🔬", layout="centered")
 
-st.title("🔬 ระบบวิเคราะห์ภาพถ่ายเชื้อมาลาเรีย")
-st.write("ไอ้ยี่สิบ! อัปโหลดรูปภาพผลเลือดจากกล้องจุลทรรศน์เพื่อเช็คว่า **ติดเชื้อ** หรือ **ไม่ติดเชื้อ**")
+st.title("🔬 ระบบวิเคราะห์เชื้อมาลาเรีย")
+st.write("ไอ้ยี่สิบ! หน้าเว็บนี้ปรับเหลือแค่ **2 คลาส** เน้นๆ ชัดๆ: **ติดเชื้อ** กับ **ไม่ติดเชื้อ** เท่านั้นสัส")
+
+# สร้างแท็บ 2 ช่องทาง
+tab1, tab2 = st.tabs(["📂 ดึงรูปจาก GitHub (Samples)", "📤 อัปโหลดรูปภาพใหม่"])
+
+selected_image = None
+
+# --- แท็บที่ 1: ดึงรูปจาก GitHub ---
+with tab1:
+    selected_file_name = st.selectbox("เลือกไฟล์รูปภาพจาก GitHub ของมึง:", SAMPLE_IMAGES)
+    if selected_file_name != "เลือกรูปภาพตัวอย่าง...":
+        img_url = GITHUB_RAW_URL + selected_file_name
+        try:
+            response = requests.get(img_url)
+            selected_image = Image.open(BytesIO(response.content))
+            st.info(f"🔗 ดึงรูปสำเร็จจาก: `{img_url}`")
+        except Exception as e:
+            st.error(f"❌ ดึงรูปจาก GitHub ไม่ผ่านสลัด เช็ค URL ดีๆ: {e}")
+
+# --- แท็บที่ 2: อัปโหลดรูปภาพเอง ---
+with tab2:
+    uploaded_file = st.file_uploader("📤 โยนรูปภาพเซลล์เม็ดเลือดเข้ามา...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        selected_image = Image.open(uploaded_file)
 
 # ----------------------------------------------------
-# ช่องอัปโหลดไฟล์รูปภาพบนหน้าเว็บ
+# 4. ส่วนประมวลผลคำนวณและพยากรณ์ผลลัพธ์ (งัดกันแค่ 2 คลาสตามสั่ง)
 # ----------------------------------------------------
-uploaded_file = st.file_uploader("โยนรูปภาพเซลล์เม็ดเลือดเข้ามาตรงนี้เลยสัส...", type=["jpg", "jpeg", "png"])
-
-if uploaded_file is not None:
-    # เปิดรูปภาพขึ้นมาโชว์บนหน้าเว็บ
-    image_display = Image.open(uploaded_file)
-    st.image(image_display, caption='📷 รูปภาพที่มึงอัปโหลดเข้ามา', use_container_width=True)
+if selected_image is not None:
+    st.write("---")
+    st.image(selected_image, caption='📷 รูปภาพที่ประมวลผล', use_container_width=True)
     
     if model is None:
-        st.error("❌ ไม่พบไฟล์โมเดล 'best_model (6).keras' ในโฟลเดอร์เดียวกับโค้ดเว็บนี้เว้ย!")
+        st.error("❌ ไม่พบไฟล์โมเดล 'best_model (6).keras' ในโฟลเดอร์นี้เว้ย!")
     else:
-        with st.spinner('⏳ AI กำลังส่องกล้องวิเคราะห์รูปภาพแป๊บ...'):
-            # 1. ปรับขนาดรูปภาพให้เข้ากับโมเดล (224x224)
-            img_resized = image_display.convert("RGB").resize((224, 224))
+        with st.spinner('⏳ AI กำลังสแกนหาเชื้อแป๊บ...'):
+            # 1. ทำพรีโพรเซสเซสซิ่ง
+            img_resized = selected_image.convert("RGB").resize((224, 224))
             img_array = np.array(img_resized)
             img_array = np.expand_dims(img_array, axis=0)
             
             # 2. สั่งโมเดลทำนายผลลัพธ์
             predictions = model.predict(img_array)[0]
-            predicted_class_idx = np.argmax(predictions)
-            confidence = predictions[predicted_class_idx]
             
-            st.write("---")
+            # ดึงเฉพาะคลาส 0 และ คลาส 1 มางัดกันตรงๆ (คลาส 2 ช่างหัวมัน ไม่เอามาแสดง)
+            prob_infected = predictions[0]
+            prob_uninfected = predictions[1]
+            
             st.subheader("📊 ผลการวิเคราะห์จากระบบ")
             
-            # 3. เช็คเงื่อนไขคัดกรองรูปภาพ "ไม่เกี่ยวข้อง" ออกไปก่อนตามที่มึงสั่งไว้
-            # ถ้าโมเดลชี้ไปคลาส 2 หรือโมเดลทายไม่ขาด (ค่าความมั่นใจต่ำกว่า 60%) ดันออกไปหมวดไม่เกี่ยวข้องทันที
-            if predicted_class_idx == 2 or confidence < 0.60:
-                st.warning("⚠️ ผลการตรวจสอบ: ไม่เกี่ยวข้อง / ไม่ใช่รูปภาพเซลล์เม็ดเลือดที่ใช้ตรวจเชื้อ")
-                st.info(f"💡 ระบบคัดออก: โมเดลมองว่าเป็นรูปภาพอื่นที่ไม่เกี่ยวข้อง (ความมั่นใจ {confidence*100:.2f}%)")
-            
+            # ตัดสินผลลัพธ์จาก 2 คลาสนี้อันไหนคะแนนสูงกว่าชนะ
+            if prob_infected > prob_uninfected:
+                st.error(f"🚨 ผลการตรวจวิเคราะห์: **ติดเชื้อมาลาเรีย (Infected / Parasitized)**")
+                st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{prob_infected*100:.2f}%")
             else:
-                # ถ้ามั่นใจว่าเป็นรูปเม็ดเลือดชัวร์ๆ ค่อยแยกคำตอบเป็น ติดเชื้อ กับ ไม่ติดเชื้อ
-                if predicted_class_idx == 0:
-                    st.error(f"🚨 ผลการตรวจวิเคราะห์: **ติดเชื้อมาลาเรีย (Infected / Parasitized)**")
-                    st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{confidence*100:.2f}%")
-                elif predicted_class_idx == 1:
-                    st.success(f"✅ ผลการตรวจวิเคราะห์: **ไม่ติดเชื้อ (Uninfected / Normal)**")
-                    st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{confidence*100:.2f}%")
+                st.success(f"✅ ผลการตรวจวิเคราะห์: **ไม่ติดเชื้อ (Uninfected / Normal)**")
+                st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{prob_uninfected*100:.2f}%")
 
-            # 4. พลอตกราฟแท่งโชว์เปรียบเทียบค่าน้ำหนักความน่าจะเป็นย้อนหลัง
+            # 4. แสดงกราฟแท่งแบบ 2 คลาสเพียวๆ ให้เห็นชัดเจน
             st.write("---")
-            st.subheader("📈 กราฟแสดงสถิติค่าน้ำหนักความน่าจะเป็น")
+            st.subheader("📈 กราฟแสดงสถิติเปรียบเทียบ 2 คลาส")
             chart_labels = {
-                "ติดเชื้อ (Class 0)": float(predictions[0]),
-                "ไม่ติดเชื้อ (Class 1)": float(predictions[1]),
-                "รูปอื่น/ไม่เกี่ยวข้อง (Class 2)": float(predictions[2])
+                "ติดเชื้อ (Infected)": float(prob_infected),
+                "ไม่ติดเชื้อ (Uninfected)": float(prob_uninfected)
             }
             st.bar_chart(chart_labels)
