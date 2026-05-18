@@ -11,9 +11,10 @@ from io import BytesIO
 # ----------------------------------------------------
 # 1. ตั้งค่าลิงก์ GitHub Repository ของมึง (แก้ไขตรงนี้เลยสัส)
 # ----------------------------------------------------
+# ใส่ลิงก์พาธตรงที่วิ่งเข้าโฟลเดอร์ samples บน GitHub มึง
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/samples/"
 
-# ใส่ชื่อไฟล์รูปภาพที่มีอยู่ในโฟลเดอร์ samples บน GitHub ของมึง
+# รายชื่อไฟล์รูปภาพที่มีอยู่ในโฟลเดอร์ samples บน GitHub ของมึง
 SAMPLE_IMAGES = [
     "เลือกรูปภาพตัวอย่าง...",
     "cell_infected_1.png",
@@ -23,12 +24,12 @@ SAMPLE_IMAGES = [
 ]
 
 # ----------------------------------------------------
-# 2. ฟังก์ชันโหลดและซ่อมแซมโมเดล Keras
+# 2. ฟังก์ชันโหลดและซ่อมแซมโมเดล Keras แช่ไว้ในระบบ
 # ----------------------------------------------------
 @st.cache_resource
 def load_malaria_model():
     model_path = 'best_model (6).keras'
-    fixed_model_path = 'fixed_streamlit_model_v4.keras'
+    fixed_model_path = 'fixed_streamlit_model_v5.keras'
     
     if not os.path.exists(fixed_model_path):
         if os.path.exists(model_path):
@@ -58,47 +59,40 @@ def load_malaria_model():
 model = load_malaria_model()
 
 # ----------------------------------------------------
-# 3. ออกแบบหน้าต่างเว็บอินเตอร์เฟซ
+# 3. ออกแบบหน้าต่างเว็บอินเตอร์เฟซ (ไม่มีส่วนอัปโหลดแล้วสลัด คลีนๆ เลย)
 # ----------------------------------------------------
-st.set_page_config(page_title="Malaria Detection (2 Classes)", page_icon="🔬", layout="centered")
+st.set_page_config(page_title="Malaria Detection Hub", page_icon="🔬", layout="centered")
 
-st.title("🔬 ระบบวิเคราะห์เชื้อมาลาเรีย")
-st.write("ไอ้ยี่สิบ! หน้าเว็บนี้ปรับเหลือแค่ **2 คลาส** เน้นๆ ชัดๆ: **ติดเชื้อ** กับ **ไม่ติดเชื้อ** เท่านั้นสัส")
+st.title("🔬 ระบบวิเคราะห์เชื้อมาลาเรีย (คลังรูปภาพ GitHub)")
+st.write("ไอ้ยี่สิบ! หน้าเว็บนี้ดึงรูปจากโฟลเดอร์ `samples` บน GitHub มาตรวจ 2 คลาสแบบออโต้ (ไม่ต้องกดอัปโหลดรูปภาพแล้วสลัด)")
 
-# สร้างแท็บ 2 ช่องทาง
-tab1, tab2 = st.tabs(["📂 ดึงรูปจาก GitHub (Samples)", "📤 อัปโหลดรูปภาพใหม่"])
+# ตัวเลือก Dropdown ดึงชื่อไฟล์รูปภาพจาก GitHub มาให้กดเลือกตามรูปตัวอย่างมึงเป๊ะ
+selected_file_name = st.selectbox("เลือกไฟล์รูปภาพจากระบบเพื่อตรวจวิเคราะห์:", SAMPLE_IMAGES)
 
 selected_image = None
 
-# --- แท็บที่ 1: ดึงรูปจาก GitHub ---
-with tab1:
-    selected_file_name = st.selectbox("เลือกไฟล์รูปภาพจาก GitHub ของมึง:", SAMPLE_IMAGES)
-    if selected_file_name != "เลือกรูปภาพตัวอย่าง...":
-        img_url = GITHUB_RAW_URL + selected_file_name
-        try:
-            response = requests.get(img_url)
-            selected_image = Image.open(BytesIO(response.content))
-            st.info(f"🔗 ดึงรูปสำเร็จจาก: `{img_url}`")
-        except Exception as e:
-            st.error(f"❌ ดึงรูปจาก GitHub ไม่ผ่านสลัด เช็ค URL ดีๆ: {e}")
-
-# --- แท็บที่ 2: อัปโหลดรูปภาพเอง ---
-with tab2:
-    uploaded_file = st.file_uploader("📤 โยนรูปภาพเซลล์เม็ดเลือดเข้ามา...", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        selected_image = Image.open(uploaded_file)
+# ถ้าระบบตรวจเจอว่ามึงเลือกชื่อรูปภาพ ค่อยสั่งให้มันไปดูดรูปจาก GitHub
+if selected_file_name != "เลือกรูปภาพตัวอย่าง...":
+    img_url = GITHUB_RAW_URL + selected_file_name
+    try:
+        response = requests.get(img_url)
+        selected_image = Image.open(BytesIO(response.content))
+        st.info(f"🔗 ดึงรูปสำเร็จจาก GitHub: `{selected_file_name}`")
+    except Exception as e:
+        st.error(f"❌ ดึงรูปไม่ผ่าน เช็คอินเทอร์เน็ตหรือ URL บน GitHub ดีๆ สลัด: {e}")
 
 # ----------------------------------------------------
-# 4. ส่วนประมวลผลคำนวณและพยากรณ์ผลลัพธ์ (งัดกันแค่ 2 คลาสตามสั่ง)
+# 4. ส่วนประมวลผลคำนวณและพยากรณ์ผลลัพธ์ (สแกน 2 คลาสเน้นๆ)
 # ----------------------------------------------------
 if selected_image is not None:
     st.write("---")
-    st.image(selected_image, caption='📷 รูปภาพที่ประมวลผล', use_container_width=True)
+    # แสดงรูปภาพที่มึงดึงมา
+    st.image(selected_image, caption=f'📷 รูปภาพ: {selected_file_name}', use_container_width=True)
     
     if model is None:
-        st.error("❌ ไม่พบไฟล์โมเดล 'best_model (6).keras' ในโฟลเดอร์นี้เว้ย!")
+        st.error("❌ ไม่พบไฟล์โมเดล 'best_model (6).keras' ในโฟลเดอร์เดียวกับโค้ดเว็บนี้เว้ย!")
     else:
-        with st.spinner('⏳ AI กำลังสแกนหาเชื้อแป๊บ...'):
+        with st.spinner('⏳ AI กำลังส่องกล้องสแกนหาเชื้อแป๊บ...'):
             # 1. ทำพรีโพรเซสเซสซิ่ง
             img_resized = selected_image.convert("RGB").resize((224, 224))
             img_array = np.array(img_resized)
@@ -107,13 +101,13 @@ if selected_image is not None:
             # 2. สั่งโมเดลทำนายผลลัพธ์
             predictions = model.predict(img_array)[0]
             
-            # ดึงเฉพาะคลาส 0 และ คลาส 1 มางัดกันตรงๆ (คลาส 2 ช่างหัวมัน ไม่เอามาแสดง)
+            # ดึงเฉพาะคลาส 0 (ติดเชื้อ) และ คลาส 1 (ไม่ติดเชื้อ) มาเปรียบเทียบกัน
             prob_infected = predictions[0]
             prob_uninfected = predictions[1]
             
             st.subheader("📊 ผลการวิเคราะห์จากระบบ")
             
-            # ตัดสินผลลัพธ์จาก 2 คลาสนี้อันไหนคะแนนสูงกว่าชนะ
+            # ตัดสินผลลัพธ์จาก 2 คลาสนี้
             if prob_infected > prob_uninfected:
                 st.error(f"🚨 ผลการตรวจวิเคราะห์: **ติดเชื้อมาลาเรีย (Infected / Parasitized)**")
                 st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{prob_infected*100:.2f}%")
@@ -121,7 +115,7 @@ if selected_image is not None:
                 st.success(f"✅ ผลการตรวจวิเคราะห์: **ไม่ติดเชื้อ (Uninfected / Normal)**")
                 st.metric(label="ค่าความมั่นใจ (Confidence)", value=f"{prob_uninfected*100:.2f}%")
 
-            # 4. แสดงกราฟแท่งแบบ 2 คลาสเพียวๆ ให้เห็นชัดเจน
+            # 4. พลอตกราฟแท่งแสดงข้อมูลเปรียบเทียบแค่ 2 คลาสตามใจมึงสั่ง
             st.write("---")
             st.subheader("📈 กราฟแสดงสถิติเปรียบเทียบ 2 คลาส")
             chart_labels = {
