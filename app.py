@@ -1,224 +1,101 @@
-import os
 import streamlit as st
 import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-from tensorflow.keras.preprocessing import image
 import numpy as np
+import os
+import zipfile
+import json
 from PIL import Image
 
-# --- CONFIGURATION ---
-MODEL_PATH = "best_model_lite.h5"
-IMG_SIZE = (224, 224)
-SAMPLE_DIR = "samples"
-
-# --- PAGE CONFIG ---
-st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
-
-# ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
-
-/* พื้นหลังอวกาศมืดสนิทและจับให้อยู่ตรงกลาง */
-.stApp { 
-    display: flex !important;
-    flex-direction: column !important; 
-    align-items: center !important;  
-    justify-content: flex-start !important; 
-    background: linear-gradient(180deg, #050a15 0%, #000000 100%);
-    color: #e6f1ff;
-}
-
-#MainMenu, footer, header { visibility: hidden; }
-
-/* หัวข้อใหญ่แนวตั้ง */
-.hero-header {
-    text-align: center;
-    padding: 16px 5%; 
-    border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
-    margin-bottom: 1.5rem;
-    width: 100%;
-}
-.hero-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 32px !important;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: linear-gradient(180deg, #ffffff, #4da3ff);
-    text-transform: uppercase;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: block; 
-    line-height: 1.3 !important;
-    margin: 0 auto;
-}
-
-/* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
-div.stButton {
-    display: flex !important;
-    justify-content: center !important;
-    width: 100% !important;
-    margin-top: 1rem !important;
-}
-
-div.stButton > button {
-    width: 100% !important;       
-    max-width: 280px !important;  
-    background: #4da3ff !important;
-    color: #02060c !important;
-    font-family: 'Orbitron', sans-serif !important;
-    height: 3.8rem !important;
-    border-radius: 8px !important;
-    border: none !important;
-    font-size: 1.1rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: 0.3s ease-in-out !important;
-}
-
-div.stButton > button:hover {
-    background: #ffffff !important;
-    box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
-    transform: scale(1.02);
-}
-
-/* ช่อง Preview รูป */
-.img-container {
-    border: 0px solid rgba(77, 163, 255, 0.2);
-    padding: 0px;
-    background: rgba(0,0,0,0.5);
-    width: 100%;
-}
-
-/* ผลลัพธ์ (Result) */
-.result-display {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 20px;
-    text-align: center !important; 
-    border: 1px solid rgba(77, 163, 255, 0.2);
-    margin-top: 20px;
-    width: 100%;
-}
-
-/* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
-.result-display * {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 26px !important; 
-        letter-spacing: 0px !important;
-    }
-    .hero-header {
-        padding: 1px 0; 
-    }
-    .result-display {
-        padding: 15px; 
-    }
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ─── HEADER ──────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="hero-header">
-    <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px; margin-top:10px;">with 98.5% Precision</p>
-</div>
-""", unsafe_allow_html=True)
-
-# ─── MODEL LOADING ─────────────────────────────────────────────────────────────
+# ----------------------------------------------------
+# 1. ฟังก์ชันโหลดและซ่อมแซมโมเดล Keras แช่ไว้ในหน่วยความจำ
+# ----------------------------------------------------
 @st.cache_resource
-def load_my_model():
-    return tf.keras.models.load_model(MODEL_PATH, compile=False)
-
-try:
-    model = load_my_model()
-except Exception as e:
-    st.error(f"🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
-    st.stop()
-
-# ─── HELPER FUNCTION FOR VALIDATION (ระบบตรวจสอบภาพไม่เกี่ยวข้อง) ──────────────
-def is_relevant_image(image_obj):
-    """ ตรวจสอบว่าภาพที่ส่งเข้ามาเป็นสไลด์เม็ดเลือดแดงในงานวิจัยหรือไม่ """
-    img_np = np.array(image_obj.convert('RGB'))
-    mean_color = img_np.mean()
+def load_malaria_model():
+    model_path = 'best_model (6).keras'
+    fixed_model_path = 'fixed_streamlit_model.keras'
     
-    # ดักจับรูปภาพทั่วไป เช่น รูปวิว สัตว์ หรือรูปสว่าง/มืดจัด ที่ไม่ใช่ลักษณะ Dataset สไลด์เม็ดเลือด
-    if mean_color < 15 or mean_color > 240:
-        return False
-    return True
-
-# ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px; text-align:center;">SELECTION_MODE</p>', unsafe_allow_html=True)
-mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
-
-img = None
-if mode == "SAMPLES":
-    if os.path.exists(SAMPLE_DIR):
-        files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        if files:
-            choice = st.selectbox("CHOOSE DATASET:", files)
-            if choice:
-                img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
+    # แก้ไขบั๊กโครงสร้าง Keras เวอร์ชั่นไม่ตรงกันให้อัตโนมัติสัส
+    if not os.path.exists(fixed_model_path):
+        if os.path.exists(model_path):
+            with zipfile.ZipFile(model_path, 'r') as yin:
+                with zipfile.ZipFile(fixed_model_path, 'w') as yout:
+                    for item in yin.infolist():
+                        data = yin.read(item.filename)
+                        if item.filename == 'config.json':
+                            config_json = json.loads(data.decode('utf-8'))
+                            def remove_quantization(obj):
+                                if isinstance(obj, dict):
+                                    if 'quantization_config' in obj: del obj['quantization_config']
+                                    for k, v in obj.items(): remove_quantization(v)
+                                elif isinstance(obj, list):
+                                    for i in obj: remove_quantization(i)
+                            remove_quantization(config_json)
+                            data = json.dumps(config_json).encode('utf-8')
+                        yout.writestr(item, data)
         else:
-            st.warning("No samples found in directory.")
+            return None
+            
+    try:
+        return tf.keras.models.load_model(fixed_model_path)
+    except Exception as e:
+        st.error(f"โหลดโมเดลไม่สำเร็จ: {e}")
+        return None
+
+# สั่งให้คลาสโหลดโมเดลสแตนด์บายรอไว้เลย
+model = load_malaria_model()
+
+# ----------------------------------------------------
+# 2. ออกแบบหน้าต่างเว็บอินเตอร์เฟซ
+# ----------------------------------------------------
+st.set_page_config(page_title="Malaria & Dengue Detection", page_icon="🔬", layout="centered")
+
+st.title("🔬 ระบบวิเคราะห์ภาพถ่ายเชื้อมาลาเรียและไข้เลือดออก")
+st.write("ไอ้ยี่สิบ! มึงลองอัปโหลดรูปภาพผลเลือด หรือรูปเซลล์ เพื่อให้ AI ทำนายผลลัพธ์แยกคลาสได้เลย")
+
+# ตั้งชื่อคลาสแสดงผลให้สอดคล้องกับโมเดล 3 คลาสของมึง
+CLASS_NAMES = [
+    "เชื้อมาลาเรีย (Malaria)", 
+    "ไข้เลือดออก / เซลล์ปกติ (Dengue / Normal)", 
+    "ไม่เกี่ยวข้อง / ไม่ใช่รูปตรวจเชื้อ (Unrelated)"
+]
+
+# ช่องอัปโหลดไฟล์รูปภาพบนหน้าเว็บ
+uploaded_file = st.file_uploader("โยนรูปภาพเข้ามารันตรงนี้สลัด...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    # เปิดรูปภาพขึ้นมาโชว์บนหน้าเว็บ
+    image_display = Image.open(uploaded_file)
+    st.image(image_display, caption='📷 รูปภาพที่มึงอัปโหลดเข้ามา', use_container_width=True)
+    
+    if model is None:
+        st.error("❌ ไม่พบไฟล์โมเดล 'best_model (6).keras' ในโฟลเดอร์เดียวกับโค้ดเว็บนี้เว้ย!")
     else:
-        st.info(f"💡 SAMPLE_DIR '{SAMPLE_DIR}' NOT FOUND ON LOCAL")
-else:
-    up = st.file_uploader("UPLOAD CELL DATA:", type=["jpg", "png", "jpeg"])
-    if up: img = Image.open(up).convert("RGB")
-
-# ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
-if img:
-    st.markdown('<div class="img-container">', unsafe_allow_html=True)
-    st.image(img, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    if st.button("START ANALYTICS"):
-        # 1. ตรวจสอบความถูกต้องของภาพก่อนส่งให้โมเดลคำนวณ
-        if not is_relevant_image(img):
-            st.markdown(f"""
-            <div class="result-display" style="border: 1px solid #ff3d6b;">
-                <p style="font-family:Rajdhani; color:#ff3d6b; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SYSTEM ERROR</p>
-                <h2 style="font-family:Orbitron; color:#ff3d6b; margin: 5px 0; letter-spacing:1px; font-size: 1.4rem; width:100%;">NOT_RELEVANT_IMAGE</h2>
-                <div style="margin: 10px auto; height: 1px; background: rgba(255,61,107,0.2); width: 100%;"></div>
-                <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.85rem; width:100%;">
-                    ภาพนี้ไม่เข้าข่ายภาพสไลด์เซลล์เม็ดเลือดแดงในงานวิจัย กรุณาตรวจสอบใหม่อีกครั้ง
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            # 2. ทำลายและประมวลผลเมื่อภาพถูกต้อง
-            img_p = img.resize(IMG_SIZE)
-            img_arr = image.img_to_array(img_p)
-            img_arr = np.expand_dims(img_arr, axis=0)
-            img_arr = preprocess_input(img_arr)
+        with st.spinner('⏳ AI กำลังขยี้รูปภาพประมวลผลคำนวณกราฟแป๊บ...'):
+            # 1. ทำพรีโพรเซสเซสซิ่ง ปรับขนาดรูปเป็น 224x224 ตามที่โมเดลระบุไว้
+            img_resized = image_display.convert("RGB").resize((224, 224))
+            img_array = np.array(img_resized)
+            img_array = np.expand_dims(img_array, axis=0) # ขยายมิติเป็น (1, 224, 224, 3)
             
-            with st.spinner("PROCESSING..."):
-                pred = float(model.predict(img_arr)[0][0])
+            # 2. สั่งโมเดลทำนายผลลัพธ์ดึงเอาค่ามาใช้งาน
+            predictions = model.predict(img_array)[0]
+            predicted_class_idx = np.argmax(predictions)
+            confidence = predictions[predicted_class_idx]
             
-            # --- ปรับแก้ Logic คลาสมาลาเรียมาตรฐาน (NIH Dataset) ---
-            # ปกติค่าเฉลยฝั่ง Sigmoid: เข้าใกล้ 1 = Uninfected (ปกติ) | เข้าใกล้ 0 = Parasitized (ติดเชื้อ)
-            if pred >= 0.5:
-                status = "NORMAL_CELL"
-                conf = pred  # มั่นใจว่าเป็นคลาสปกติกี่ %
-                color = "#00d2b4"  # สีเขียวไซไฟ
+            st.write("---")
+            st.subheader("📊 ผลการวิเคราะห์จากโมเดล")
+            
+            # 3. ตั้งเงื่อนไขแยกหมวดหมู่ตามที่มึงสั่งมา
+            # ถ้าโมเดลชี้ไปที่คลาส 2 หรือค่าความน่าจะเป็นต่ำกว่า 50% ให้ตีเป็นรูปคนอื่น/ไม่เกี่ยวข้องทันที
+            if predicted_class_idx == 2 or confidence < 0.5:
+                st.warning("⚠️ ผลลัพธ์: ไม่เกี่ยวข้อง / ไม่ใช่รูปภาพผลตรวจเชื้อมาลาเรียหรือไข้เลือดออก")
+                st.info(f"💡 ระบบคัดออกไปหมวดรูปภาพอื่น (ความมั่นใจสูงสุดเพียง: {confidence*100:.2f}%)")
             else:
-                status = "INFECTED_DETECTED"
-                conf = 1 - pred  # มั่นใจว่าเป็นคลาสติดเชื้อกี่ % (กลับค่าจาก 0 เป็นค่าบวกเต็มร้อย)
-                color = "#ff3d6b"  # สีแดงไซไฟ
-            
-            st.markdown(f"""
-            <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
-                <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%;">{status}</h2>
-                <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
-                <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">CONFIDENCE LEVEL</p>
-                <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff; width:100%;">{conf*100:.2f}%</h1>
-            </div>
-            """, unsafe_allow_html=True)
+                # ถ้าทายถูกกลุ่มคลาสมาลาเรีย หรือไข้เลือดออกแดงปกติ
+                st.success(f"🎯 ผลการตรวจวิเคราะห์: **{CLASS_NAMES[predicted_class_idx]}**")
+                st.metric(label="ค่าความมั่นใจสูงสุด (Confidence)", value=f"{confidence*100:.2f}%")
+                
+            # 4. ดึงฟังก์ชันพลอตกราฟแท่งแสดงข้อมูล Output มาโชว์ด้านล่างแยกกัน
+            st.write("---")
+            st.subheader("📈 กราฟแสดงสถิติค่าน้ำหนักความน่าจะเป็นย้อนหลัง")
+            chart_data = {CLASS_NAMES[i]: float(predictions[i]) for i in range(len(CLASS_NAMES))}
+            st.bar_chart(chart_data) # พลอตกราฟแท่งสวยๆ ของ Streamlit ให้เลยข้ามฟังก์ชันสบายๆ
