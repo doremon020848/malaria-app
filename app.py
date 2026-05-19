@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model_lite (1).h5" # ปรับตามไฟล์ล่าสุดของมึงละสสับ
+MODEL_PATH = "malaria_mobilenetv2_model (2).keras" # ปรับตามไฟล์ล่าสุดของมึงละสสับ
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
@@ -52,21 +52,6 @@ st.markdown("""
     line-height: 1.3 !important;
     margin: 0 auto;
 }
-
-/* กล่อง Info Card แบบเรียงแถวเดียว */
-.info-card-vertical {
-    background: rgba(10, 25, 47, 0.6);
-    border: 1px solid rgba(77, 163, 255, 0.15);
-    border-left: 4px solid #4da3ff;
-    padding: 15px; 
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-.info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
-.info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.9rem; }
 
 /* ปรับแต่งความกว้างของช่อง Selectbox */
 div[data-testid="stSelectbox"] {
@@ -119,7 +104,7 @@ div.stButton > button:hover {
 .result-display {
     background: rgba(255, 255, 255, 0.03);
     padding: 20px;
-    text-align: center !important; /* บังคับกลางตรงนี้ */
+    text-align: center !important; 
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
     width: 100%;
@@ -153,7 +138,7 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# ─── HEADER ──────────────────────────────────────────────────────────────────
+# ─── HEADER (เอา 98.5% Precision ออกตามสั่ง) ──────────────────────────────────
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
@@ -200,17 +185,22 @@ if img:
         img_arr = preprocess_input(img_arr)
         
         with st.spinner("PROCESSING..."):
-            pred = float(model.predict(img_arr)[0][0])
+            # 🛠️ สั่งทำนายผลและดึงคะแนนของทั้ง 3 คลาสออกมาครบถ้วน
+            predictions = model.predict(img_arr)[0]
         
-        # คัดกรองและแบ่งเงื่อนไข 2 คลาส
-        is_safe = pred > 0.5
-        conf = pred if is_safe else 1 - pred
-        color = "#00d2b4" if is_safe else "#ff3d6b"  # เขียวปกติ / แดงติดเชื้อ
+        # 🛠️ ใช้ np.argmax หาตำแหน่งคลาสที่ทำคะแนนได้สูงสุดจริงๆ (แก้บั๊กเอ๋อทายคลาส 0 ซ้ำซาก)
+        predicted_class = np.argmax(predictions)
+        conf = predictions[predicted_class] # ดึงค่าความมั่นใจของคลาสที่ชนะมาแสดงผล
         
-        # 🛠️ เปลี่ยนข้อความเป็นภาษาไทยตามสั่งตรงนี้เลยสัสไอ้ยี่สิบ!
-        status = "เซลล์ปกติ" if is_safe else "เซลล์ติดเชื้อ"
+        # คัดกรองคลาสแปลงข้อความภาษาไทยพร้อมยัดสีสไตล์อวกาศ
+        if predicted_class == 0:
+            status = "เซลล์ติดเชื้อ"
+            color = "#ff3d6b"  # เจอเชื้อสาดสีแดงกระแทกตา
+        else:
+            status = "เซลล์ปกติ"
+            color = "#00d2b4"  # ปลอดภัยสาดสีเขียวมิ้นต์อวกาศ
         
-        # แสดงกล่องสรุปผลวิเคราะห์
+        # แสดงกล่องสรุปผลวิเคราะห์แนวตั้งตรงกลางจออย่างเท่
         st.markdown(f"""
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
