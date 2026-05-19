@@ -1,69 +1,155 @@
 import os
-import numpy as np
+import streamlit as st
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.preprocessing import image
+import numpy as np
 from PIL import Image
 
-# =================================================================
-# ─── CONFIGURATION (ตั้งค่าตรงนี้เลยสัส) ───────────────────────────
-# =================================================================
-# 1. ใส่ชื่อไฟล์โมเดลของมึง (เช็คชื่อไฟล์ดีๆ ว่าตรงกับในเครื่องไหม)
-MODEL_PATH = "malaria_mobilenetv2_model (2).keras" 
-
-# 2. ใส่พาธของรูปภาพเม็ดเลือดที่มึงต้องการจะสั่งให้มันทาย
-IMAGE_TO_PREDICT = "samples/ชื่อไฟล์รูปภาพของมึง.png" 
-
+# --- CONFIGURATION ---
+MODEL_PATH = "best_model_lite.h5"
 IMG_SIZE = (224, 224)
+SAMPLE_DIR = "samples"
 
-# =================================================================
-# ─── SYSTEM CORE (ระบบรันโหลดโมเดลและทายผล) ────────────────────────
-# =================================================================
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered")
 
-def predict_single_image(model_file, img_path):
-    # 1. ตรวจสอบไฟล์ก่อนรัน ป้องกันโค้ดเอ๋อแดก
-    if not os.path.exists(model_file):
-        print(f"❌ ERROR: ไม่พบไฟล์โมเดล '{model_file}' ในโฟลเดอร์นี้สลัด!")
-        return
-    if not os.path.exists(img_path):
-        print(f"❌ ERROR: ไม่พบไฟล์รูปภาพ '{img_path}' เช็คพาธและชื่อไฟล์ด่วน!")
-        return
+# ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
 
-    print("⏳ กำลังโหลดสมองกล AI...")
-    # โหลดโมเดลแบบปิด compile ไว้เพื่อความเร็วและลด error เรื่องเวอร์ชั่น Keras
-    model = tf.keras.models.load_model(model_path, compile=False)
-    print("✅ โหลดโมเดลสำเร็จ!")
+/* พื้นหลังอวกาศมืดสนิทและจับให้อยู่ตรงกลาง */
+.stApp { 
+    display: flex !important;
+    flex-direction: column !important; 
+    align-items: center !important;  
+    justify-content: flex-start !important; 
+    background: linear-gradient(180deg, #050a15 0%, #000000 100%);
+    color: #e6f1ff;
+}
 
-    # 2. ทำ Preprocess รูปภาพแปลงเข้าสู่มิติที่โมเดลต้องการ [1, 224, 224, 3]
-    print(f"📷 กำลังประมวลผลรูปภาพ: {os.path.basename(img_path)}")
-    img = Image.open(img_path).convert("RGB")
-    img_resized = img.resize(IMG_SIZE)
-    img_array = image.img_to_array(img_resized)
-    img_array = np.expand_dims(img_array, axis=0)
-    img_array = preprocess_input(img_array) # สเกลค่าพิกเซลให้เข้ากับ MobileNetV2
+#MainMenu, footer, header { visibility: hidden; }
 
-    # 3. สั่งโมเดลลุยทำนายผลลัพธ์ (Predict)
-    print("🚀 AI กำลังส่องกล้องวิเคราะห์หาเชื้อมาลาเรีย...")
-    predictions = model.predict(img_array)[0] # ดึงผลลัพธ์รูปแรกออกมา
+/* หัวข้อใหญ่แนวตั้ง */
+.hero-header {
+    text-align: center;
+    padding: 16px 5%; 
+    border-bottom: 1.5px solid rgba(77, 163, 255, 0.2);
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 32px !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #ffffff, #4da3ff);
+    text-transform: uppercase;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block; 
+    line-height: 1.3 !important;
+    margin: 0 auto;
+}
 
-    # 4. ใช้ np.argmax หาตัวเลขคลาสที่ทำคะแนนได้สูงสุดจริงๆ (แก้บั๊กทายซ้ำซาก)
-    predicted_class = np.argmax(predictions)
-    confidence = predictions[predicted_class]
+/* กล่อง Info Card แบบเรียงแถวเดียว */
+.info-card-vertical {
+    background: rgba(10, 25, 47, 0.6);
+    border: 1px solid rgba(77, 163, 255, 0.15);
+    border-left: 4px solid #4da3ff;
+    padding: 15px; 
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
+.info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.9rem; }
 
-    # 5. แยกเงื่อนไขสรุปคำตอบตามที่มึงบรีฟไว้
-    if predicted_class == 0:
-        status = "🚨 เซลล์ติดเชื้อ (INFECTED DETECTED)"
-    else:
-        status = "✅ เซลล์ปกติ (NORMAL CELL)"
+/* ปรับแต่งความกว้างของช่อง Selectbox */
+div[data-testid="stSelectbox"] {
+    width: 100% !important;
+    max-width: 450px !important;
+    margin: 0 auto !important;
+}
 
-    # 6. พ่นผลลัพธ์ความหล่อออกมาทางหน้าจอ Console
-    print("\n" + "="*50)
-    print("📊 [ ผลการตรวจวิเคราะห์จากระบบ ]")
-    print(f"➡️ ผลลัพธ์: {status}")
-    print(f"➡️ ค่าความมั่นใจ (Confidence Level): {confidence * 100:.2f}%")
-    print("="*50 + "\n")
+/* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
+div.stButton {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 1rem !important;
+}
 
+div.stButton > button {
+    width: 100% !important;       
+    max-width: 280px !important;  
+    background: #4da3ff !important;
+    color: #02060c !important;
+    font-family: 'Orbitron', sans-serif !important;
+    height: 3.8rem !important;
+    border-radius: 8px !important;
+    border: none !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s ease-in-out !important;
+}
 
-# ─── สั่งรันฟังก์ชัน ──────────────────────────────────────────────────
-if __name__ == "__main__":
-    predict_single_image(MODEL_PATH, IMAGE_TO_PREDICT)
+div.stButton > button:hover {
+    background: #ffffff !important;
+    box-shadow: 0 0 20px rgba(77, 163, 255, 0.6) !important;
+    transform: scale(1.02);
+}
+
+/* ช่อง Preview รูป */
+.img-container {
+    border: 0px solid rgba(77, 163, 255, 0.2);
+    padding: 0px;
+    background: rgba(0,0,0,0.5);
+    width: 100%;
+}
+
+/* ผลลัพธ์ (Result) */
+.result-display {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px;
+    text-align: center !important; /* บังคับกลางตรงนี้ */
+    border: 1px solid rgba(77, 163, 255, 0.2);
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
+.result-display * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* =======================================================
+   MOBILE RESPONSIVE (ถ้าหน้าจอเล็กกว่า 768px ให้ทำตามนี้)
+   ======================================================= */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 26px !important; 
+        letter-spacing: 0px !important;
+    }
+    .hero-header {
+        padding: 1px 0; 
+    }
+    .result-display {
+        padding: 15px; 
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ─── HEADER ──────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="hero-header">
+    <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
+    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px; margin-top
