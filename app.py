@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "malaria_mobilenetv2_model (2).keras" # ปรับตามไฟล์ล่าสุดของมึงละสสับ
+MODEL_PATH = "best_model_lite (1).h5" # ปรับตามไฟล์ล่าสุดของมึงละสสับ
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
