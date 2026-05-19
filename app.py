@@ -1,4 +1,3 @@
-#ก่อนเปลี่ยน font
 import os
 import streamlit as st
 import tensorflow as tf
@@ -69,6 +68,13 @@ st.markdown("""
 .info-label { font-family: 'Rajdhani'; color: #8892b0; text-transform: uppercase; font-size: 0.8rem; }
 .info-value { font-family: 'Orbitron'; color: #4da3ff; font-size: 0.9rem; }
 
+/* ปรับแต่งความกว้างของช่อง Selectbox */
+div[data-testid="stSelectbox"] {
+    width: 100% !important;
+    max-width: 450px !important;
+    margin: 0 auto !important;
+}
+
 /* --- แก้ไขปุ่ม Action ให้รองรับมือถือ --- */
 div.stButton {
     display: flex !important;
@@ -105,6 +111,8 @@ div.stButton > button:hover {
     padding: 0px;
     background: rgba(0,0,0,0.5);
     width: 100%;
+    max-width: 450px !important;
+    margin: 0 auto !important;
 }
 
 /* ผลลัพธ์ (Result) */
@@ -115,6 +123,9 @@ div.stButton > button:hover {
     border: 1px solid rgba(77, 163, 255, 0.2);
     margin-top: 20px;
     width: 100%;
+    max-width: 450px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 /* บังคับให้ลูกทุกลูกใน result-display อยู่ตรงกลางเสมอ */
@@ -142,11 +153,10 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# ─── HEADER ──────────────────────────────────────────────────────────────────
+# ─── HEADER (เอา 98.5% Precision ออกเรียบร้อยสลัด คลีนๆ เลย) ──────────────────────────
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
-    <p style="font-family:Rajdhani; color:#4da3ff; letter-spacing:2px; margin-top:10px;">with 98.5% Precision</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -161,23 +171,20 @@ except Exception as e:
     st.error(f"🚀 SYSTEM ERROR: MODEL_NOT_FOUND")
     st.stop()
 
-# ─── DATA INPUT SECTION ──────────────────────────────────────────────────────
-st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px; text-align:center;">SELECTION_MODE</p>', unsafe_allow_html=True)
-mode = st.radio("", ["SAMPLES", "UPLOAD"], horizontal=True, label_visibility="collapsed")
-
+# ─── DATA INPUT SECTION (ดึงรูปจากโฟลเดอร์ samples) ──────────────────────────────────
 img = None
-if mode == "SAMPLES":
-    if os.path.exists(SAMPLE_DIR):
-        files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        if files:
-            choice = st.selectbox("CHOOSE DATASET:", files)
-            if choice:
-                img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
-        else:
-            st.warning("No samples found in directory.")
+
+if os.path.exists(SAMPLE_DIR):
+    files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    if files:
+        st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:10px; text-align:center; color:#8892b0;">CHOOSE REPOSITORY DATASET</p>', unsafe_allow_html=True)
+        choice = st.selectbox("", files, label_visibility="collapsed")
+        if choice:
+            img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
+    else:
+        st.warning("⚠️ No sample image files found in 'samples' directory.")
 else:
-    up = st.file_uploader("UPLOAD CELL DATA:", type=["jpg", "png"])
-    if up: img = Image.open(up).convert("RGB")
+    st.error("⚠️ SYSTEM ERROR: 'samples' directory not found.")
 
 # ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
 if img:
@@ -186,7 +193,7 @@ if img:
     st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button("START ANALYTICS"):
-        # Preprocess
+        # Preprocess รูปภาพส่งเข้าโมเดล
         img_p = img.resize(IMG_SIZE)
         img_arr = image.img_to_array(img_p)
         img_arr = np.expand_dims(img_arr, axis=0)
@@ -195,11 +202,13 @@ if img:
         with st.spinner("PROCESSING..."):
             pred = float(model.predict(img_arr)[0][0])
         
+        # คัดกรองและแบ่งเงื่อนไข 2 คลาส
         is_safe = pred > 0.5
         conf = pred if is_safe else 1 - pred
-        color = "#00d2b4" if is_safe else "#ff3d6b"
+        color = "#00d2b4" if is_safe else "#ff3d6b"  # เขียวปกติ / แดงติดเชื้อ
         status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
         
+        # แสดงกล่องสรุปผลวิเคราะห์
         st.markdown(f"""
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
