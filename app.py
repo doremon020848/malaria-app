@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "malaria_mobilenetv2_model (2).keras"
+MODEL_PATH = "malaria_mobilenetv2_model (2).keras" # ปรับตามไฟล์ล่าสุดของมึงละสสับ
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
@@ -17,7 +17,7 @@ st.set_page_config(page_title="MalariaScope · Vertical Space", layout="centered
 # ─── THE SPACESHIP UI (CSS - Mobile & Vertical Optimized) ──────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Sarabun:wght@300;500;700&display=swap');
 
 /* พื้นหลังอวกาศมืดสนิทและจับให้อยู่ตรงกลาง */
 .stApp { 
@@ -153,7 +153,7 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# ─── HEADER (เอา 98.5% Precision ออกเรียบร้อยสลัด คลีนๆ เลย) ──────────────────────────
+# ─── HEADER ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-header">
     <h1 class="hero-title">Lightweight Image classification for Malaria detection using mobilenetv2</h1>
@@ -206,13 +206,15 @@ if img:
         is_safe = pred > 0.5
         conf = pred if is_safe else 1 - pred
         color = "#00d2b4" if is_safe else "#ff3d6b"  # เขียวปกติ / แดงติดเชื้อ
-        status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
+        
+        # 🛠️ เปลี่ยนข้อความเป็นภาษาไทยตามสั่งตรงนี้เลยสัสไอ้ยี่สิบ!
+        status = "เซลล์ปกติ" if is_safe else "เซลล์ติดเชื้อ"
         
         # แสดงกล่องสรุปผลวิเคราะห์
         st.markdown(f"""
         <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
-            <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%;">{status}</h2>
+            <h2 style="font-family:'Sarabun', 'Orbitron', sans-serif; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 2rem; font-weight: 700; width:100%;">{status}</h2>
             <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
             <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">CONFIDENCE LEVEL</p>
             <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff; width:100%;">{conf*100:.2f}%</h1>
