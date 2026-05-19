@@ -7,8 +7,7 @@ import numpy as np
 from PIL import Image
 
 # --- CONFIGURATION ---
-MODEL_PATH = "best_model (6).keras
-"
+MODEL_PATH = "best_model (6).keras"
 IMG_SIZE = (224, 224)
 SAMPLE_DIR = "samples"
 
@@ -172,4 +171,43 @@ img = None
 
 if os.path.exists(SAMPLE_DIR):
     files = [f for f in os.listdir(SAMPLE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-    if files
+    if files:
+        st.markdown('<p style="font-family:Orbitron; font-size:0.8rem; margin-top:20px; text-align:center; color:#8892b0;">CHOOSE REPOSITORY DATASET</p>', unsafe_allow_html=True)
+        choice = st.selectbox("", files, label_visibility="collapsed")
+        if choice:
+            img = Image.open(os.path.join(SAMPLE_DIR, choice)).convert("RGB")
+    else:
+        st.warning("⚠️ No sample image files found in 'samples' directory.")
+else:
+    st.error("⚠️ SYSTEM ERROR: 'samples' directory not found.")
+
+# ─── SCANNING & RESULTS ──────────────────────────────────────────────────────
+if img:
+    st.markdown('<div class="img-container">', unsafe_allow_html=True)
+    st.image(img, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    if st.button("START ANALYTICS"):
+        # Preprocess
+        img_p = img.resize(IMG_SIZE)
+        img_arr = image.img_to_array(img_p)
+        img_arr = np.expand_dims(img_arr, axis=0)
+        img_arr = preprocess_input(img_arr)
+        
+        with st.spinner("PROCESSING..."):
+            pred = float(model.predict(img_arr)[0][0])
+        
+        is_safe = pred > 0.5
+        conf = pred if is_safe else 1 - pred
+        color = "#00d2b4" if is_safe else "#ff3d6b"
+        status = "NORMAL_CELL" if is_safe else "INFECTED_DETECTED"
+        
+        st.markdown(f"""
+        <div class="result-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">SCAN RESULT</p>
+            <h2 style="font-family:Orbitron; color:{color}; margin: 5px 0; letter-spacing:1px; font-size: 1.5rem; width:100%;">{status}</h2>
+            <div style="margin: 10px auto; height: 1px; background: rgba(77,163,255,0.2); width: 100%;"></div>
+            <p style="font-family:Rajdhani; color:#8892b0; margin:0; font-size:0.8rem; text-transform:uppercase; width:100%;">CONFIDENCE LEVEL</p>
+            <h1 style="font-family:Orbitron; font-size:1.8rem; margin:0; color:#ffffff; width:100%;">{conf*100:.2f}%</h1>
+        </div>
+        """, unsafe_allow_html=True)
